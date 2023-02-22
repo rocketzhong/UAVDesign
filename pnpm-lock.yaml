@@ -3,10 +3,12 @@ lockfileVersion: 5.4
 specifiers:
   express: ^4.18.2
   serialport: ^10.5.0
+  three: ^0.149.0
 
 dependencies:
   express: 4.18.2
   serialport: 10.5.0
+  three: 0.149.0
 
 packages:
 
@@ -518,6 +520,10 @@ packages:
   /statuses/2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /three/0.149.0:
+    resolution: {integrity: sha512-tohpUxPDht0qExRLDTM8sjRLc5d9STURNrdnK3w9A+V4pxaTBfKWWT/IqtiLfg23Vfc3Z+ImNfvRw1/0CtxrkQ==}
     dev: false
 
   /toidentifier/1.0.1:
