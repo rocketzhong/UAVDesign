@@ -1,0 +1,15 @@
+{
+  "name": "uavdesign",
+  "version": "1.0.0",
+  "description": "无人机地面站跨浏览器控件",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "信卓3120002268钟雅乐",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "serialport": "^10.5.0"
+  }
+}
