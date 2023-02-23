@@ -1,30 +1,19 @@
 <template>
     <div>
-        <Model3d />
-    </div>
-    <div class="plane_status_wrapper">
-        <div class="plane_status">
-            <div class="title">飞控状态</div>
-            <FlightControlStatus />
+        <header>无人机地面站</header>
+        <div>
+            <el-button type="primary" @click="$router.replace('/status')">飞控状态</el-button>
+            <el-button type="primary" @click="$router.replace('/setting')">飞控控制</el-button>
         </div>
-        <div class="plane_status">
-            <div class="title">状态波形</div>
-        </div>
-        <div class="plane_status">
-            <div class="title">接收机</div>
-        </div>
-        <div class="plane_status">
-            <div class="title">传感器数据</div>
-        </div>
-        <div class="plane_status">
-            <div class="title">GPS信息</div>
-        </div>
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" />
+            </keep-alive>
+        </router-view>
     </div>
 </template>
 
-<script setup>
-import Model3d from './components/model3d.vue'
-import FlightControlStatus from './components/FligntControlStatus.vue'
+<script lang="ts" setup>
 </script>
 
 <style lang="less">
@@ -33,27 +22,14 @@ import FlightControlStatus from './components/FligntControlStatus.vue'
     padding: 0;
 }
 
-.plane_status_wrapper {
-    display: flex;
-    justify-content: space-between;
-}
-
-.plane_status {
-    border: 1px solid #000;
-    border-radius: 5px;
-    margin: 2px;
-    margin-top: 5px;
-    width: calc(100% / 11 * 2);
-
-    &:nth-child(1) {
-        width: calc(100% / 11 * 3);
-    }
-
-    .title {
-        transform: translate(0, -0.6em);
-        background-color: #fff;
-        display: inline-block;
-        margin-left: 10px;
-    }
+header {
+    background-color: rgb(0, 138, 251);
+    padding: 2px;
+    padding-left: 20px;
+    height: 50px;
+    line-height: 50px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #fff;
 }
 </style>

@@ -35,7 +35,7 @@ let count = 0;
 let sendTime = Date.now();
 let reciveData = '';
 let reciveArr = [];
-sp.on('data', (data: any) => {
+sp.on('data', (data: Buffer) => {
     // @TODO 接受到数据时，进行处理，展示到页面上
     console.log(data)
 });

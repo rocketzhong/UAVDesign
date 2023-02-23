@@ -1,0 +1,131 @@
+<template>
+    <div class="setting_wrapper">
+        <div class="title">PID设置</div>
+        <div>
+            <ul class="pid_column">
+                <div class="pid_mark"><span>P</span><span>I</span><span>D</span></div>
+                <li v-for="(item, index) in pid_list_1" :key="item.initalName">
+                    <div class="list_order">{{ index + 1 }}</div>
+                    <el-input v-model="item.name" class="pid_name" size="small" />
+                    <el-input-number class="pid_number" size="small" v-model="item.p" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.i" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.d" :min="0" :max="65535"
+                        controls-position="right" />
+                </li>
+            </ul>
+            <ul class="pid_column">
+                <div class="pid_mark"><span>P</span><span>I</span><span>D</span></div>
+                <li v-for="(item, index) in pid_list_2" :key="item.initalName">
+                    <div class="list_order">{{ index + 7 }}</div>
+                    <el-input v-model="item.name" class="pid_name" size="small" />
+                    <el-input-number class="pid_number" size="small" v-model="item.p" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.i" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.d" :min="0" :max="65535"
+                        controls-position="right" />
+                </li>
+            </ul>
+            <ul class="pid_column">
+                <div class="pid_mark"><span>P</span><span>I</span><span>D</span></div>
+                <li v-for="(item, index) in pid_list_3" :key="item.initalName">
+                    <div class="list_order">{{ index + 13 }}</div>
+                    <el-input v-model="item.name" class="pid_name" size="small" />
+                    <el-input-number class="pid_number" size="small" v-model="item.p" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.i" :min="0" :max="65535"
+                        controls-position="right" />
+                    <el-input-number class="pid_number" size="small" v-model="item.d" :min="0" :max="65535"
+                        controls-position="right" />
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <div>
+        <div class="title">PID设置</div>
+    </div>
+    <div class="setting_wrapper">
+        <div class="title">飞行模式</div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { reactive } from 'vue';
+const mapper = (name: string) => { return { name: name, initalName: name, p: 0, i: 0, d: 0, } }
+const init_names_1 = ['ROL速率', 'PIT速率', 'YAW速率', '自稳ROL', '自稳PIT', '自稳YAW']
+const pid_list_1 = reactive(init_names_1.map(mapper))
+const init_names_2 = ['高度速率', '高度保持', '位置速率', '位置保持', 'PID11', 'PID12']
+const pid_list_2 = reactive(init_names_2.map(mapper))
+const init_names_3 = ['PID13', 'PID14', 'PID15', 'PID16', 'PID17', 'PID18']
+const pid_list_3 = reactive(init_names_3.map(mapper))
+</script>
+
+<style lang="less" scoped>
+.setting_wrapper {
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin: 2px;
+    margin-top: 10px;
+    min-width: 1200px;
+
+    .title {
+        transform: translate(0, -0.6em);
+        background-color: #fff;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .pid_mark {
+        position: relative;
+        // display: inline-block;
+
+        span {
+            position: absolute;
+            top: -20px;
+            font-weight: 600;
+
+            &:nth-child(1) {
+                left: 140px;
+            }
+
+            &:nth-child(2) {
+                left: 230px;
+            }
+
+            &:nth-child(3) {
+                left: 320px;
+            }
+        }
+
+
+    }
+
+    .pid_column {
+        display: inline-block;
+        width: 33.3%;
+        min-width: 380px;
+
+        li {
+            list-style: none;
+        }
+    }
+
+    .pid_name {
+        width: 80px;
+        text-align: center;
+    }
+
+    .pid_number {
+        width: 90px;
+    }
+
+    .list_order {
+        width: 2em;
+        text-align: center;
+        display: inline-block;
+    }
+}
+</style>
