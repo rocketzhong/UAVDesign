@@ -1,16 +1,19 @@
-const express = require('express');
+import express from 'express';;
+const bodyParser = require('body-parser')
 const router = express.Router();
 const { SerialPort } = require('serialport');
 
+router.use(bodyParser.json())
+router.use(bodyParser.urlencoded({ extended: true }))
+
 const sp = new SerialPort({
-    //波特率，可在设备管理器中对应端口的属性中查看
     path: 'COM3',
     baudRate: 115200,
     dataBits: 8,
     autoOpen: false,
 });
 //连接串口后进行写入指令操作
-sp.open((err) => {
+sp.open((err: Error) => {
     console.log('sp.IsOpen:', sp.isOpen);
     if (err) {
         console.log("打开端口COM3错误:" + err);
@@ -32,18 +35,18 @@ let count = 0;
 let sendTime = Date.now();
 let reciveData = '';
 let reciveArr = [];
-sp.on('data', (data) => {
+sp.on('data', (data: any) => {
     // @TODO 接受到数据时，进行处理，展示到页面上
-    // data
+    console.log(data)
 });
 //#endregion
 
 //错误监听
-sp.on('error', (error) => {
+sp.on('error', (error: Error) => {
     console.log('error: ' + error)
 });
 
-router.route('/').get((req, res, header) => {
+router.get('/', (req, res, header) => {
     res.end('hello world!')
 })
 
@@ -51,13 +54,15 @@ router.route('/').get((req, res, header) => {
  * 接收到网页传递过来的命令，下发过去
  * */
 router.route('/send1').post((req, res) => {
-    let theBuffer = new Buffer(req.body.command, "hex");
-    sp.write(theBuffer, function(error) {
+    const stringToSend = req.body.title
+    console.log(stringToSend);
+    const theBuffer = Buffer.from(stringToSend, "hex");
+    sp.write(theBuffer, function (error: Error) {
         //指令下发
         if (error) {
             console.log("发送错误" + error)
         } else {
-            console.log("需要下发的命令：" + req.body.command);
+            console.log("需要下发的命令：" + stringToSend);
             res.json({
                 result: 1
             });
@@ -68,9 +73,9 @@ router.route('/send1').post((req, res) => {
 /**
  *@param bufferStr :需要传递的命令，字符串格式
  * */
-const sendCommand = (bufferStr) => {
-    const theBuffer = new Buffer(bufferStr, "hex");
-    sp.write(theBuffer, function(error) {
+const sendCommand = (bufferStr: string) => {
+    const theBuffer = Buffer.from(bufferStr, "hex");
+    sp.write(theBuffer, function (error: Error) {
         //指令下发
         if (error) {
             console.log("发送错误" + error)
