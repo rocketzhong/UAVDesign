@@ -1,5 +1,5 @@
 <template>
-    <div class="setting_wrapper">
+    <div class="setting_wrapper pid_setting_wrapper">
         <div class="title">PID设置</div>
         <div>
             <ul class="pid_column">
@@ -44,11 +44,33 @@
         </div>
 
     </div>
-    <div>
-        <div class="title">PID设置</div>
+    <div class="pid_buttons">
+        <div></div>
     </div>
-    <div class="setting_wrapper">
-        <div class="title">飞行模式</div>
+    <div>
+        <div class="setting_wrapper flight_modes">
+            <div class="title">飞行模式</div>
+            <div>
+                <div v-for="(aux, index) in flight_modes">
+                    <div class="aux_select">
+                        <span>AUX{{ index + 1 }}</span><el-slider :max="2" v-model="aux.value" />
+                    </div>
+                    <div class="aux_select">
+                        <span>模式</span>
+                        <el-select placeholder="模式1" size="small"></el-select>
+                        <el-select placeholder="模式2" size="small"></el-select>
+                        <el-select placeholder="模式3" size="small"></el-select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="sensor_calibration setting_wrapper ">
+            <div class="title">传感器校准</div>
+        </div>
+        <div class="setting_wrapper else_configurations">
+            <div class="title">其他参数</div>
+        </div>
     </div>
 </template>
 
@@ -61,6 +83,18 @@ const init_names_2 = ['高度速率', '高度保持', '位置速率', '位置保
 const pid_list_2 = reactive(init_names_2.map(mapper))
 const init_names_3 = ['PID13', 'PID14', 'PID15', 'PID16', 'PID17', 'PID18']
 const pid_list_3 = reactive(init_names_3.map(mapper))
+
+enum FlightMode {
+    MODE1 = 0,
+    MODE2 = 1,
+    MODE3 = 2
+}
+const o = { value: FlightMode.MODE2 }
+const aux1 = reactive(Object.create(o))
+const aux2 = reactive(Object.create(o))
+const aux3 = reactive(Object.create(o))
+
+const flight_modes: any[] = [aux1, aux2, aux3]
 </script>
 
 <style lang="less" scoped>
@@ -69,7 +103,6 @@ const pid_list_3 = reactive(init_names_3.map(mapper))
     border-radius: 5px;
     margin: 2px;
     margin-top: 10px;
-    min-width: 1200px;
 
     .title {
         transform: translate(0, -0.6em);
@@ -127,5 +160,39 @@ const pid_list_3 = reactive(init_names_3.map(mapper))
         text-align: center;
         display: inline-block;
     }
+
+}
+
+.pid_buttons {
+    background: rgb(240, 240, 240);
+    height: 100px;
+}
+
+.pid_setting_wrapper {
+    min-width: 1200px;
+}
+
+.flight_modes {
+    width: 40%;
+    display: inline-block;
+
+    .aux_select {
+        display: flex;
+        justify-content: space-around;
+
+        .el-slider {
+            width: 70%;
+        }
+
+        .el-select {
+            width: 25%;
+        }
+    }
+}
+
+.sensor_calibration,
+.else_configurations {
+    width: 28%;
+    display: inline-block;
 }
 </style>

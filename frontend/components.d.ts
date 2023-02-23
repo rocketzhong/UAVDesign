@@ -12,6 +12,8 @@ declare module '@vue/runtime-core' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSlider: typeof import('element-plus/es')['ElSlider']
     FligntControlStatus: typeof import('./src/components/FligntControlStatus.vue')['default']
     Model3d: typeof import('./src/components/model3d.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
