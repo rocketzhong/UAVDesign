@@ -4,8 +4,10 @@ specifiers:
   '@types/body-parser': ^1.19.2
   '@types/express': ^4.17.17
   '@types/node': ^18.14.0
+  '@types/websocket': ^1.0.5
   body-parser: ^1.20.2
   express: ^4.18.2
+  nodejs-websocket: ^1.7.2
   serialport: ^10.5.0
   three: ^0.149.0
   typescript: ^4.9.5
@@ -13,8 +15,10 @@ specifiers:
 dependencies:
   '@types/body-parser': 1.19.2
   '@types/express': 4.17.17
+  '@types/websocket': 1.0.5
   body-parser: 1.20.2
   express: 4.18.2
+  nodejs-websocket: 1.7.2
   serialport: 10.5.0
   three: 0.149.0
 
@@ -164,6 +168,12 @@ packages:
     resolution: {integrity: sha512-z5xyF6uh8CbjAu9760KDKsH2FcDxZ2tFCsA4HIMWE6IkiYMXfVoa+4f9KX+FN0ZLsaMw1WNG2ETLA6N+/YA+cg==}
     dependencies:
       '@types/mime': 3.0.1
+      '@types/node': 18.14.0
+    dev: false
+
+  /@types/websocket/1.0.5:
+    resolution: {integrity: sha512-NbsqiNX9CnEfC1Z0Vf4mE1SgAJ07JnRYcNex7AJ9zAVzmiGHmjKFEk7O4TJIsgv2B1sLEb6owKFZrACwdYngsQ==}
+    dependencies:
       '@types/node': 18.14.0
     dev: false
 
@@ -474,6 +484,11 @@ packages:
   /node-gyp-build/4.6.0:
     resolution: {integrity: sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==}
     hasBin: true
+    dev: false
+
+  /nodejs-websocket/1.7.2:
+    resolution: {integrity: sha512-PFX6ypJcCNDs7obRellR0DGTebfUhw1SXGKe2zpB+Ng1DQJhdzbzx1ob+AvJCLzy2TJF4r8cCDqMQqei1CZdPQ==}
+    engines: {node: '>=4'}
     dev: false
 
   /object-inspect/1.12.3:
