@@ -1,26 +1,7 @@
-const { SerialPort } = require('serialport');
-
-/**
- * 指令监听
- * @see count         :接收到数据的次数
- * @see sendTime      :接收到数据的时间
- * @see reciveData    :接收到数据的核验字符（大写），一组数据的开头是'5AA5'并且结尾是'7E'
- * @see reciveArr     :接收到数据的总结，存储在数组中
- * @param data        :SerialPort的函数自带返回数据
- * */
-let count = 0;
-let sendTime = Date.now();
-let reciveData = '';
-let reciveArr = [];
-
-/**
- * 接收到网页传递过来的命令，下发过去
- * */
-
-//#endregion
-
-
-
+import { SerialPort } from 'serialport'
+import { isStatus, statusParser } from './data_transfer';
+import { dataBuffer } from './types';
+import { WebSocket } from 'ws'
 /**
  *@param bufferStr :需要传递的命令，字符串格式
  * */
@@ -62,8 +43,9 @@ let reciveArr = [];
 
 
 
-class SerialPortConnection {
-    sp: typeof SerialPort;
+export class SerialPortConnection {
+    sp: SerialPort;
+    isOpen: boolean = false;
     // splist: [];
     constructor(options?: any) {
         this.sp = new SerialPort({
@@ -73,30 +55,37 @@ class SerialPortConnection {
             autoOpen: false,
             ...options
         });
-        //连接串口后进行写入指令操作
         this.sp.open(this.spOpenHandler);
-        this.sp.on('data', this.spDataHandler);
         this.sp.on('error', this.spErrorHandler);
     }
-    spOpenHandler = (err: Error) => {
-        console.log('sp.IsOpen:', this.sp.isOpen);
+    onMessage(wsConn: WebSocket, callback?: Function) {
+        const fn = (data: dataBuffer) => {
+            if (isStatus(data)) {
+                const result = statusParser(data);
+                wsConn.send(result);
+            }
+        }
+        this.sp.on('data', fn);
+        if (callback) callback()
+    }
+    spOpenHandler = (err: Error | null) => {
+        console.log('sp.IsOpen:', this.sp?.isOpen || false);
+        this.isOpen = this.sp?.isOpen || false;
         if (err) {
             console.log("打开端口COM3错误:" + err);
         } else {
             console.log("打开端口成功！")
         }
     }
-    spDataHandler = (data: Buffer) => {
-        // @TODO 接受到数据时，进行处理，展示到页面上
-        console.log(data)
-    }
     //错误监听
     spErrorHandler(error: Error) {
+        this.isOpen = this.sp?.isOpen || false;
         console.log('error: ' + error)
     }
     send = (bufferStr: string) => {
+        // 地面站/遥控器发送，飞控接收
         const theBuffer = Buffer.from(bufferStr, "hex");
-        this.sp.write(theBuffer, function (error: Error) {
+        this.sp.write(theBuffer, function (error: Error | null | undefined) {
             //指令下发
             if (error) {
                 console.log("发送错误" + error)
@@ -106,5 +95,3 @@ class SerialPortConnection {
         })
     }
 }
-
-export const connection = new SerialPortConnection()

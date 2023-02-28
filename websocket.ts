@@ -1,20 +1,31 @@
-import { connection } from "./SerialPortCommunication"
+import { SerialPortConnection } from './SerialPortCommunication'
+import { SerialPort } from 'serialport'
 
-const ws = require('nodejs-websocket')
+import { WebSocketServer, WebSocket } from 'ws'
 
-ws.createServer(function (conn: any) {
-    console.log("创建新连接")
+const server = new WebSocketServer({ port: 555 });
 
-    conn.on("text", function (data: string) {
-        const result = JSON.parse(data)
-        connection.send(result);
+server.on('connection', function (wsConn: WebSocket) {
+    console.log("WebSocket创建新连接")
+    let spConn = new SerialPortConnection();
+    SerialPort.list().then(() => {
+        //@TODO
+        // 列表功能
     })
+    spConn.onMessage(wsConn)
+    wsConn.on('message', function message(data) {
+        // 地面站后台收到浏览器指令数据data
+        // 串口发送至飞控
+        // if(spConn.isOpen)
+        console.log('received: %s', data);
+        if (typeof data === 'string') {
+            spConn.send(data);
+        }
+    });
 
-    conn.on("error", function (err: Error) {
-        console.log(err);
-    })
-
-    conn.on("close", function (code: string, reason: string) {
+    wsConn.on("close", function (code: string, reason: string) {
         console.log("Connection closed", code, reason)
     })
-}).listen(555)
+    wsConn.on('error', console.error);
+    wsConn.send('something');
+});

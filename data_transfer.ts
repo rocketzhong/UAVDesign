@@ -1,5 +1,4 @@
-import { dataBuffer } from "./types";
-import { connection } from './SerialPortCommunication'
+import { dataBuffer, ReceiveType } from "./types";
 /**
  * 计算sum验证
  * @param {dataBuffer} data
@@ -12,8 +11,17 @@ function getSum(data: dataBuffer) {
         sum += data[i];
     return sum % (1 << 8);
 }
+// 输入无符号数，转为有符号数
+const toInt16 = (number: number): number => {
+    return (number <= 32767) ? number : number - 65536
+}
 
-const [isVer,
+// 输入无符号数，转为有符号数
+const toInt32 = (number: number): number => {
+    return (number <= 2147483647) ? number : number - 4294967296
+}
+
+export const [isVer,
     isStatus,
     isSenser,
     isRCData,
@@ -52,12 +60,24 @@ const [isVer,
     return judgeType
 })
 
-function statusParser(data: dataBuffer): Object {
-    const status = {
-        ROL: 0
-    }
 
-    return status;
+export function createMessage(data: any, type: ReceiveType) {
+    const result = { data, type }
+    return JSON.stringify(result)
+}
+
+export function statusParser(data: dataBuffer): string {
+    const len = data[3];
+    if (data[4 + len] === undefined) return '[Error] Content is Less';
+    const status = {
+        ROL: toInt16((data[4] << 8) + data[5]) / 100, // int16, 横滚角
+        PIT: toInt16((data[6] << 8) + data[7]) / 100, // int16, 横滚角
+        YAW: toInt16((data[8] << 8) + data[9]) / 100, // int16, 偏航角
+        ALT_USE: toInt32((data[10] << 24) + (data[11] << 16) + (data[12] << 8) + data[13]), // int32 高度cm
+        FLY_MODEL: data[14], // uint8
+        ARMED: data[15], // uint8 0加锁 1解锁
+    }
+    return createMessage(status, ReceiveType.Status);
 }
 
 /**
@@ -68,8 +88,5 @@ function statusParser(data: dataBuffer): Object {
  * @param {number} length
  */
 export function groundStationReceive(data: dataBuffer, length: number) {
-    if (isStatus(data)) {
-        const result = statusParser(data);
-        // connection.send(result);
-    }
+
 }
