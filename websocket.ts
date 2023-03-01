@@ -2,15 +2,16 @@ import { SerialPortConnection } from './SerialPortCommunication'
 import { SerialPort } from 'serialport'
 
 import { WebSocketServer, WebSocket } from 'ws'
+import { createMessage } from './data_transfer';
+import { SendType } from './types';
 
 const server = new WebSocketServer({ port: 555 });
 
 server.on('connection', function (wsConn: WebSocket) {
     console.log("WebSocket创建新连接")
     let spConn = new SerialPortConnection();
-    SerialPort.list().then(() => {
-        //@TODO
-        // 列表功能
+    SerialPort.list().then((list) => {
+        wsConn.send(createMessage(list.map(i => i.path), SendType.SPList))
     })
     spConn.onMessage(wsConn)
     wsConn.on('message', function message(data) {

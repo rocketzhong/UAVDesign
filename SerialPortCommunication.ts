@@ -1,5 +1,5 @@
 import { SerialPort } from 'serialport'
-import { isStatus, statusParser } from './data_transfer';
+import { isStatus, statusParser, isPID1, PIDParser } from './data_transfer';
 import { dataBuffer } from './types';
 import { WebSocket } from 'ws'
 /**
@@ -46,7 +46,6 @@ import { WebSocket } from 'ws'
 export class SerialPortConnection {
     sp: SerialPort;
     isOpen: boolean = false;
-    // splist: [];
     constructor(options?: any) {
         this.sp = new SerialPort({
             path: 'COM3',
@@ -63,6 +62,8 @@ export class SerialPortConnection {
             if (isStatus(data)) {
                 const result = statusParser(data);
                 wsConn.send(result);
+            } else if (isPID1(data)) {
+
             }
         }
         this.sp.on('data', fn);

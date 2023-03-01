@@ -1,6 +1,7 @@
 export type dataBuffer = number[]
 export enum ReceiveType {
-    Status = '_Receive__Status'
+    Status = '_Receive__Status',
+    PID1 = '_Receive__PID1'
 }
 export enum SendType {
     SPList = '_SerialPort__List',

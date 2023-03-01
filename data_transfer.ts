@@ -1,4 +1,4 @@
-import { dataBuffer, ReceiveType } from "./types";
+import { dataBuffer, ReceiveType, SendType } from "./types";
 /**
  * 计算sum验证
  * @param {dataBuffer} data
@@ -61,7 +61,7 @@ export const [isVer,
 })
 
 
-export function createMessage(data: any, type: ReceiveType) {
+export function createMessage(data: any, type: ReceiveType | SendType) {
     const result = { data, type }
     return JSON.stringify(result)
 }
@@ -80,6 +80,21 @@ export function statusParser(data: dataBuffer): string {
     return createMessage(status, ReceiveType.Status);
 }
 
+
+export function PIDParser(data: dataBuffer): string {
+    const pid_data = {
+        PID1_P: toInt16((data[4] << 8) + data[5]),
+        PID1_I: toInt16((data[6] << 8) + data[7]),
+        PID1_D: toInt16((data[8] << 8) + data[9]),
+        PID2_P: toInt16((data[10] << 8) + data[11]),
+        PID2_I: toInt16((data[12] << 8) + data[13]),
+        PID2_D: toInt16((data[14] << 8) + data[15]),
+        PID3_P: toInt16((data[16] << 8) + data[17]),
+        PID3_I: toInt16((data[18] << 8) + data[19]),
+        PID3_D: toInt16((data[20] << 8) + data[21]),
+    }
+    return createMessage(pid_data, ReceiveType.PID1);
+}
 /**
  * 地面站接收，飞控发送
  * 
