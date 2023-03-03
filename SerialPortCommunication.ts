@@ -2,6 +2,10 @@ import { SerialPort } from 'serialport'
 import { isStatus, statusParser, isPID1, PIDParser } from './data_transfer';
 import { dataBuffer } from './types';
 import { WebSocket } from 'ws'
+
+
+
+
 /**
  *@param bufferStr :需要传递的命令，字符串格式
  * */
@@ -49,7 +53,7 @@ export class SerialPortConnection {
     constructor(options?: any) {
         this.sp = new SerialPort({
             path: 'COM3',
-            baudRate: 115200,
+            baudRate: 500000,
             dataBits: 8,
             autoOpen: false,
             ...options
@@ -58,12 +62,14 @@ export class SerialPortConnection {
         this.sp.on('error', this.spErrorHandler);
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
-        const fn = (data: dataBuffer) => {
+        const fn = (data: Buffer) => {
             if (isStatus(data)) {
                 const result = statusParser(data);
                 wsConn.send(result);
             } else if (isPID1(data)) {
 
+            } else {
+                console.log('不规律')
             }
         }
         this.sp.on('data', fn);
@@ -73,9 +79,9 @@ export class SerialPortConnection {
         console.log('sp.IsOpen:', this.sp?.isOpen || false);
         this.isOpen = this.sp?.isOpen || false;
         if (err) {
-            console.log("打开端口COM3错误:" + err);
+            console.log("打开串口COM3错误:" + err);
         } else {
-            console.log("打开端口成功！")
+            console.log("打开串口成功！")
         }
     }
     //错误监听

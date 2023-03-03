@@ -38,7 +38,7 @@ export const [isVer,
     isPID4,
     isPID5,
     isPID6,
-]: ((data: dataBuffer) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
+]: ((data: Buffer) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
     0x10,
     0x11,
     0x12,
@@ -52,7 +52,7 @@ export const [isVer,
      * @param {dataBuffer} data
      * @return {boolean} 
      */
-    const judgeType = (data: dataBuffer): boolean => {
+    const judgeType = (data: Buffer): boolean => {
         return (data[0] === 0xAA
             && data[1] === 0xAA
             && data[2] === code)
@@ -66,7 +66,7 @@ export function createMessage(data: any, type: ReceiveType | SendType) {
     return JSON.stringify(result)
 }
 
-export function statusParser(data: dataBuffer): string {
+export function statusParser(data: Buffer): string {
     const len = data[3];
     if (data[4 + len] === undefined) return '[Error] Content is Less';
     const status = {

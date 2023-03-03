@@ -28,5 +28,5 @@ server.on('connection', function (wsConn: WebSocket) {
         console.log("Connection closed", code, reason)
     })
     wsConn.on('error', console.error);
-    wsConn.send('something');
+    wsConn.send(`{"type":"_WebSocket__OPEN","data":"WebSocket 开启连接"}`);
 });

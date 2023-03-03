@@ -14,6 +14,7 @@
 </template>
 
 <script lang="ts" setup>
+import './sw';
 </script>
 
 <style lang="less">

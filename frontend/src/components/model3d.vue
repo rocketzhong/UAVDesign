@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+import { planeStatus } from '../sw.ts'
 import { onMounted } from 'vue'
 import * as THREE from 'three';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -26,7 +27,7 @@ onMounted(() => {
         0.1,
         1000);
     camera.position.set(-7, 3, 0);
-    camera.lookAt(0, -1, 0);
+    camera.lookAt(0, 0, 0);
 
     // 光线
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
@@ -34,10 +35,17 @@ onMounted(() => {
     scene.add(hemiLight);
     // 加载模型
     const loader = new GLTFLoader().setPath('assets/');
+    let model
     loader.load('uav.glb', (gltf) => {
+        if (gltf.scene) model = gltf.scene;
         scene.add(gltf.scene);
     });
     const animationFrame = () => {
+        if (model) {
+            model.rotation.x = planeStatus.ROL / 180 * Math.PI;
+            model.rotation.z = planeStatus.PIT / 180 * Math.PI;
+            model.rotation.y = -planeStatus.YAW / 180 * Math.PI;
+        }
         renderer.render(scene, camera);
         window.requestAnimationFrame(animationFrame);
     };
