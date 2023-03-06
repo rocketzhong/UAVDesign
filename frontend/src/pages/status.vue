@@ -9,6 +9,7 @@
         </div>
         <div class="plane_status">
             <div class="title">状态波形</div>
+            <Waves/>
         </div>
         <div class="plane_status">
             <div class="title">接收机</div>
@@ -25,6 +26,7 @@
 <script lang="ts" setup>
 import Model3d from '../components/model3d.vue'
 import FlightControlStatus from '../components/FligntControlStatus.vue'
+import Waves from '../components/Waves.vue'
 </script>
 
 <style lang="less" scoped>

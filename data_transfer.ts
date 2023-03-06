@@ -4,10 +4,11 @@ import { dataBuffer, ReceiveType, SendType } from "./types";
  * @param {dataBuffer} data
  * @return {*} 
  */
-function getSum(data: dataBuffer) {
+function getSum(data: dataBuffer, len: number) {
     // 数组求和
     let sum = 0;
-    for (let i = 0; i < data.length; i++)
+    len--;
+    for (let i = 0; i < len; i++)
         sum += data[i];
     return sum % (1 << 8);
 }
@@ -68,7 +69,8 @@ export function createMessage(data: any, type: ReceiveType | SendType) {
 
 export function statusParser(data: number[]): string | { notCompleted: true } {
     const len = data[3];
-    if (data[4 + len] === undefined) return { notCompleted: true };
+    if (data[4 + len] !== getSum(data, 5 + len))
+        return { notCompleted: true };
     const status = {
         ROL: toInt16((data[4] << 8) + data[5]) / 100, // int16, 横滚角
         PIT: toInt16((data[6] << 8) + data[7]) / 100, // int16, 横滚角

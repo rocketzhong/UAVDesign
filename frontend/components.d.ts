@@ -18,5 +18,7 @@ declare module '@vue/runtime-core' {
     Model3d: typeof import('./src/components/model3d.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Wave: typeof import('./src/components/Wave.vue')['default']
+    Waves: typeof import('./src/components/Waves.vue')['default']
   }
 }
