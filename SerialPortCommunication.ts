@@ -49,7 +49,10 @@ import { WebSocket } from 'ws'
 
 export class SerialPortConnection {
     sp: SerialPort;
-    isOpen: boolean = false;
+    isOpen = () => {
+        return this.sp.isOpen;
+    };
+    bufferStore: number[] = [];
     constructor(options?: any) {
         this.sp = new SerialPort({
             path: 'COM3',
@@ -63,13 +66,31 @@ export class SerialPortConnection {
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
         const fn = (data: Buffer) => {
-            if (isStatus(data)) {
-                const result = statusParser(data);
-                wsConn.send(result);
-            } else if (isPID1(data)) {
+            this.bufferStore.push(...data);
+
+            // 清除误码信息
+            while (this.bufferStore.length > 1 &&
+                !(this.bufferStore[0] === 0xAA
+                    && this.bufferStore[1] === 0xAA)) {
+                this.bufferStore.shift();
+            }
+            if (this.bufferStore.length < 3) return;
+            if (isStatus(this.bufferStore)) {
+                const result = statusParser(this.bufferStore);
+                if (typeof result === 'object') {
+                    // notCompleted: return出去，将下一帧放入
+                    return;
+                } else {
+                    wsConn.send(result);
+                    const len = this.bufferStore[3];
+                    this.bufferStore = this.bufferStore.slice(5 + len);
+                }
+            } else if (isPID1(this.bufferStore)) {
 
             } else {
-                console.log('不规律')
+                // 误码
+                console.log(this.bufferStore);
+                this.bufferStore.length = 0;
             }
         }
         this.sp.on('data', fn);
@@ -77,7 +98,6 @@ export class SerialPortConnection {
     }
     spOpenHandler = (err: Error | null) => {
         console.log('sp.IsOpen:', this.sp?.isOpen || false);
-        this.isOpen = this.sp?.isOpen || false;
         if (err) {
             console.log("打开串口COM3错误:" + err);
         } else {
@@ -86,7 +106,6 @@ export class SerialPortConnection {
     }
     //错误监听
     spErrorHandler(error: Error) {
-        this.isOpen = this.sp?.isOpen || false;
         console.log('error: ' + error)
     }
     send = (bufferStr: string) => {

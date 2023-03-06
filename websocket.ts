@@ -6,10 +6,13 @@ import { createMessage } from './data_transfer';
 import { SendType } from './types';
 
 const server = new WebSocketServer({ port: 555 });
-
+let spConn = new SerialPortConnection();
+setInterval(() => {
+    if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
+}, 1000)
 server.on('connection', function (wsConn: WebSocket) {
-    console.log("WebSocket创建新连接")
-    let spConn = new SerialPortConnection();
+    console.log("WebSocket创建新连接");
+
     SerialPort.list().then((list) => {
         wsConn.send(createMessage(list.map(i => i.path), SendType.SPList))
     })

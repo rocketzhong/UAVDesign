@@ -38,7 +38,7 @@ export const [isVer,
     isPID4,
     isPID5,
     isPID6,
-]: ((data: Buffer) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
+]: ((data: number[]) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
     0x10,
     0x11,
     0x12,
@@ -49,10 +49,10 @@ export const [isVer,
     /**
      * 通过判定功能字判定类型，返回对应类型的判断函数
      *
-     * @param {dataBuffer} data
+     * @param {number[]} data
      * @return {boolean} 
      */
-    const judgeType = (data: Buffer): boolean => {
+    const judgeType = (data: number[]): boolean => {
         return (data[0] === 0xAA
             && data[1] === 0xAA
             && data[2] === code)
@@ -66,9 +66,9 @@ export function createMessage(data: any, type: ReceiveType | SendType) {
     return JSON.stringify(result)
 }
 
-export function statusParser(data: Buffer): string {
+export function statusParser(data: number[]): string | { notCompleted: true } {
     const len = data[3];
-    if (data[4 + len] === undefined) return '[Error] Content is Less';
+    if (data[4 + len] === undefined) return { notCompleted: true };
     const status = {
         ROL: toInt16((data[4] << 8) + data[5]) / 100, // int16, 横滚角
         PIT: toInt16((data[6] << 8) + data[7]) / 100, // int16, 横滚角

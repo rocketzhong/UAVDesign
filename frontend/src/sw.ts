@@ -7,6 +7,15 @@ export function createWebSocket() {
 }
 export const sw = ref(createWebSocket());
 
+/**
+ * 每1秒检测连接状态，开启重连
+ */
+setInterval(() => {
+    if (sw.value.readyState > 1) {
+        sw.value = createWebSocket();
+    }
+}, 1000)
+
 export const planeStatus = reactive({
     ALT_USE: 0,
     PIT: 0,
