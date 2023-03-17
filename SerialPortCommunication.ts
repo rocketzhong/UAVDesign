@@ -1,5 +1,5 @@
 import { SerialPort } from 'serialport'
-import { isStatus, statusParser, isPID1, PIDParser } from './data_transfer';
+import { isStatus, statusParser, isPID1, PIDParser, isCheck } from './data_transfer';
 import { dataBuffer } from './types';
 import { WebSocket } from 'ws'
 
@@ -8,7 +8,6 @@ export class SerialPortConnection {
     isOpen = () => {
         return this.sp.isOpen;
     };
-    bufferStore: number[] = [];
     constructor(options?: any) {
         this.sp = new SerialPort({
             path: 'COM3',
@@ -21,33 +20,21 @@ export class SerialPortConnection {
         this.sp.on('error', this.spErrorHandler);
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
-        const fn = (data: Buffer) => {
-            this.bufferStore.push(...data);
-
-            // 清除误码信息
-            while (this.bufferStore.length > 1 &&
-                !(this.bufferStore[0] === 0xAA
-                    && this.bufferStore[1] === 0xAA)) {
-                this.bufferStore.shift();
-            }
-            while (this.bufferStore.length > 2 && this.bufferStore[2] > 100) { this.bufferStore.shift() };
-            if (this.bufferStore.length < 5) return;
-            if (isStatus(this.bufferStore)) {
-                const result = statusParser(this.bufferStore);
+        const fn = (data: dataBuffer) => {
+            if (isStatus(data)) {
+                const result = statusParser(data);
                 if (typeof result === 'object') {
                     // notCompleted: return出去，将下一帧放入
                     return;
                 } else {
                     wsConn.send(result);
-                    const len = this.bufferStore[3];
-                    this.bufferStore = this.bufferStore.slice(5 + len);
                 }
-            } else if (isPID1(this.bufferStore)) {
+            } else if (isPID1(data)) {
 
+            } else if (isCheck(data)) {
+                console.log(data)
             } else {
-                // 误码
-                console.log('误码', this.bufferStore);
-                this.bufferStore.length = 0;
+                // 丢帧误码
             }
         }
         this.sp.on('data', fn);
@@ -56,6 +43,7 @@ export class SerialPortConnection {
     spOpenHandler = (err: Error | null) => {
         console.log('sp.IsOpen:', this.sp?.isOpen || false);
         if (err) {
+            console.clear();
             console.log("打开串口COM3错误:" + err);
         } else {
             console.log("打开串口成功！")
@@ -65,15 +53,15 @@ export class SerialPortConnection {
     spErrorHandler(error: Error) {
         console.log('error: ' + error)
     }
-    send = (bufferStr: string) => {
+    send = (bufferStr: number[]) => {
         // 地面站/遥控器发送，飞控接收
-        const theBuffer = Buffer.from(bufferStr, "hex");
-        this.sp.write(theBuffer, function (error: Error | null | undefined) {
+        const buf = Buffer.from(bufferStr)
+        this.sp.write(buf.toString('hex'), function (error: Error | null | undefined) {
             //指令下发
             if (error) {
                 console.log("发送错误" + error)
             } else {
-                console.log("自动下发的命令：" + bufferStr);
+                console.log("主动下发的命令：" + buf.toString('hex'));
             }
         })
     }

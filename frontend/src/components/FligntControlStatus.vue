@@ -7,7 +7,7 @@
             </div>
             <div class="status_wrap">
                 <div class="status_title">锁定状态</div>
-                <div class="value">锁定</div>
+                <div class="value">{{ planeStatus.ARMED ? '解锁' : '锁定' }}</div>
             </div>
             <div class="status_wrap">
                 <div class="status_title">GPS状态</div>

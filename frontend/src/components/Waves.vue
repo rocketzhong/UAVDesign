@@ -78,12 +78,12 @@ const option1 = {
     containLabel: true
     }
 };
-const option2 = {...option1,};
-const option3 = {...option1};
-const option4 = {...option1,};
-option2.series[0].data = [];
-option3.series[0].data = [];
-option4.series[0].data = [];
+const option2 = {...option1 };
+const option3 = {...option1 };
+const option4 = {...option1 };
+option2.series = [{data: [0,0,0,0],type: 'line',areaStyle:{}}];
+option3.series = [{data: [0,0,0,0],type: 'line',areaStyle:{}}];
+option4.series = [{data: [0,0,0,0],type: 'line',areaStyle:{}}];
 onMounted(()=> {
     const myChart1 = echarts.init(document.getElementById('chart1'));
     const myChart2 = echarts.init(document.getElementById('chart2'));
@@ -94,7 +94,7 @@ onMounted(()=> {
     myChart3.setOption(option3);
     myChart4.setOption(option4);
     watch(planeStatus,()=>{
-        option1.series[0].data.push(planeStatus.YAW);
+        option1.series[0].data.push(planeStatus.ROL);
         if(option1.series[0].data.length > 500) option1.series[0].data.shift();
         myChart1.setOption(option1);
         
@@ -102,7 +102,7 @@ onMounted(()=> {
         if(option2.series[0].data.length > 500) option2.series[0].data.shift();
         myChart2.setOption(option2);
         
-        option3.series[0].data.push(planeStatus.ROL);
+        option3.series[0].data.push(planeStatus.YAW);
         if(option3.series[0].data.length > 500) option3.series[0].data.shift();
         myChart3.setOption(option3);
         

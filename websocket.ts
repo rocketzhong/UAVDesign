@@ -2,7 +2,7 @@ import { SerialPortConnection } from './SerialPortCommunication'
 import { SerialPort } from 'serialport'
 
 import { WebSocketServer, WebSocket } from 'ws'
-import { createMessage } from './data_transfer';
+import { createMessage, createPID1 } from './data_transfer';
 import { SendType } from './types';
 
 const server = new WebSocketServer({ port: 555 });
@@ -16,14 +16,20 @@ server.on('connection', function (wsConn: WebSocket) {
     SerialPort.list().then((list) => {
         wsConn.send(createMessage(list.map(i => i.path), SendType.SPList))
     })
+    if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
     spConn.onMessage(wsConn)
-    wsConn.on('message', function message(data) {
+    wsConn.on('message', function message(buffer) {
         // 地面站后台收到浏览器指令数据data
         // 串口发送至飞控
         // if(spConn.isOpen)
-        console.log('received: %s', data);
-        if (typeof data === 'string') {
-            spConn.send(data);
+        // console.log('received: %s', buffer);
+        try {
+            buffer = JSON.parse(buffer.toString());
+            console.log(buffer)
+        } catch (e) {
+        }
+        if ('pidData' in buffer) {
+            spConn.send(createPID1(buffer.pidData as any));
         }
     });
 

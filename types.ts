@@ -7,3 +7,7 @@ export enum SendType {
     SPList = '_SerialPort__List',
     PID = '_PID_DATA'
 }
+
+export type SpSendData = {
+    buffer: number[]
+}

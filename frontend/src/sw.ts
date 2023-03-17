@@ -21,13 +21,14 @@ export const planeStatus = reactive({
     PIT: 0,
     ROL: 0,
     YAW: 0,
-    FLY_MODEL: 0
+    FLY_MODEL: 0,
+    ARMED: 0
 })
 
 function createInitialization(sw: WebSocket) {
     sw.onopen = () => {
         console.log('连接成功!')
-        sw.send('浏览器连接上了!')
+        sw.send('浏览器连接上了!');
     }
     sw.onclose = () => {
         console.log('连接关闭！')
@@ -43,6 +44,7 @@ function createInitialization(sw: WebSocket) {
                 planeStatus.YAW = status?.YAW;
                 planeStatus.ALT_USE = status?.ALT_USE / 100;
                 planeStatus.FLY_MODEL = status?.FLY_MODEL;
+                planeStatus.ARMED = status?.ARMED;
             }
         } catch (error) {
             console.log(error)

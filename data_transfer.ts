@@ -39,13 +39,15 @@ export const [isVer,
     isPID4,
     isPID5,
     isPID6,
-]: ((data: number[]) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
+    isCheck
+]: ((data: dataBuffer) => boolean)[] = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x09, 0x0A, 0x0B,
     0x10,
     0x11,
     0x12,
     0x13,
     0x14,
     0x15,
+    0xEF
 ].map((code) => {
     /**
      * 通过判定功能字判定类型，返回对应类型的判断函数
@@ -53,14 +55,13 @@ export const [isVer,
      * @param {number[]} data
      * @return {boolean} 
      */
-    const judgeType = (data: number[]): boolean => {
+    const judgeType = (data: dataBuffer): boolean => {
         return (data[0] === 0xAA
             && data[1] === 0xAA
             && data[2] === code)
     }
     return judgeType
 })
-
 
 export function createMessage(data: any, type: ReceiveType | SendType) {
     const result = { data, type }
@@ -97,13 +98,31 @@ export function PIDParser(data: dataBuffer): string {
     }
     return createMessage(pid_data, ReceiveType.PID1);
 }
-/**
- * 地面站接收，飞控发送
- * 
- * @export
- * @param {number[]} data
- * @param {number} length
- */
-export function groundStationReceive(data: dataBuffer, length: number) {
 
+export function createPID1(data: any[]) {
+    const data_len = 18;
+    const result = [0xaa, 0xaf, 10, data_len]
+    // PID1
+    result[4] = Math.floor(data[0].p / 256);
+    result[5] = data[0].p % 256
+    result[6] = Math.floor(data[0].i / 256);
+    result[7] = data[0].i % 256
+    result[8] = Math.floor(data[0].d / 256);
+    result[9] = data[0].d % 256
+    // PID2
+    result[10] = Math.floor(data[0].p / 256);
+    result[11] = data[1].p % 256
+    result[12] = Math.floor(data[0].i / 256);
+    result[13] = data[1].i % 256
+    result[14] = Math.floor(data[0].d / 256);
+    result[15] = data[1].d % 256
+    // PID3
+    result[16] = Math.floor(data[0].p / 256);
+    result[17] = data[2].p % 256
+    result[18] = Math.floor(data[0].i / 256);
+    result[19] = data[2].i % 256
+    result[20] = Math.floor(data[0].d / 256);
+    result[21] = data[2].d % 256
+    result[22] = getSum(result, 5 + data_len)
+    return result
 }

@@ -45,7 +45,9 @@
 
     </div>
     <div class="pid_buttons">
-        <div></div>
+            <el-button size='large'>读取PID</el-button>
+            <el-button size='large' @click="sendPID">写入PID</el-button>
+            <el-button size='large'>恢复默认</el-button>
     </div>
     <div>
         <div class="setting_wrapper flight_modes">
@@ -76,6 +78,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { sw } from '../sw.ts'
 const mapper = (name: string) => { return { name: name, initalName: name, p: 0, i: 0, d: 0, } }
 const init_names_1 = ['ROL速率', 'PIT速率', 'YAW速率', '自稳ROL', '自稳PIT', '自稳YAW']
 const pid_list_1 = reactive(init_names_1.map(mapper))
@@ -95,6 +98,14 @@ const aux2 = reactive(Object.create(o))
 const aux3 = reactive(Object.create(o))
 
 const flight_modes: any[] = [aux1, aux2, aux3]
+
+
+function sendPID() {
+    
+    sw.value.send(JSON.stringify({
+        pidData:pid_list_1
+    }))
+}
 </script>
 
 <style lang="less" scoped>
@@ -166,6 +177,9 @@ const flight_modes: any[] = [aux1, aux2, aux3]
 .pid_buttons {
     background: rgb(240, 240, 240);
     height: 100px;
+    align-items: center;
+    display:flex;
+    justify-content:space-around;
 }
 
 .pid_setting_wrapper {
