@@ -25,7 +25,6 @@ server.on('connection', function (wsConn: WebSocket) {
         // console.log('received: %s', buffer);
         try {
             buffer = JSON.parse(buffer.toString());
-            console.log(buffer)
         } catch (e) {
         }
         if ('pidData' in buffer) {

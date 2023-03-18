@@ -68,10 +68,11 @@ export function createMessage(data: any, type: ReceiveType | SendType) {
     return JSON.stringify(result)
 }
 
-export function statusParser(data: number[]): string | { notCompleted: true } {
+export function statusParser(data: dataBuffer): string {
     const len = data[3];
+    // 检验失败，丢帧
     if (data[4 + len] !== getSum(data, 5 + len))
-        return { notCompleted: true };
+        return '[Error]';
     const status = {
         ROL: toInt16((data[4] << 8) + data[5]) / 100, // int16, 横滚角
         PIT: toInt16((data[6] << 8) + data[7]) / 100, // int16, 横滚角
@@ -101,28 +102,37 @@ export function PIDParser(data: dataBuffer): string {
 
 export function createPID1(data: any[]) {
     const data_len = 18;
-    const result = [0xaa, 0xaf, 10, data_len]
-    // PID1
+    const result = [0xaa, 0xaf, 0x10, data_len]
+    // PID1（ROL速率）
     result[4] = Math.floor(data[0].p / 256);
     result[5] = data[0].p % 256
     result[6] = Math.floor(data[0].i / 256);
     result[7] = data[0].i % 256
     result[8] = Math.floor(data[0].d / 256);
     result[9] = data[0].d % 256
-    // PID2
-    result[10] = Math.floor(data[0].p / 256);
+    // PID2（PIT速率）
+    result[10] = Math.floor(data[1].p / 256);
     result[11] = data[1].p % 256
-    result[12] = Math.floor(data[0].i / 256);
+    result[12] = Math.floor(data[1].i / 256);
     result[13] = data[1].i % 256
-    result[14] = Math.floor(data[0].d / 256);
+    result[14] = Math.floor(data[1].d / 256);
     result[15] = data[1].d % 256
-    // PID3
-    result[16] = Math.floor(data[0].p / 256);
+    // PID3（YAW速率）
+    result[16] = Math.floor(data[2].p / 256);
     result[17] = data[2].p % 256
-    result[18] = Math.floor(data[0].i / 256);
+    result[18] = Math.floor(data[2].i / 256);
     result[19] = data[2].i % 256
-    result[20] = Math.floor(data[0].d / 256);
+    result[20] = Math.floor(data[2].d / 256);
     result[21] = data[2].d % 256
     result[22] = getSum(result, 5 + data_len)
     return result
+}
+
+export function POWERParser(data: dataBuffer) {
+    // 电池信息转换
+    const power_data = {
+        voltage: (data[4] << 8) + data[5],
+        current: (data[6] << 8) + data[7],
+    }
+    return createMessage(power_data, ReceiveType.POWER);
 }
