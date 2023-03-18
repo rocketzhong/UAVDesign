@@ -5,10 +5,11 @@ import {
     isPID1,
     PIDParser,
     isRCData,
+    ReceiverParser,
     isCheck,
     isSenser,
     isPOWER,
-    POWERParser
+    POWERParser,
 } from './data_transfer';
 import { dataBuffer } from './types';
 import { WebSocket } from 'ws'
@@ -20,7 +21,6 @@ function frameHeaderChecker(data: dataBuffer): boolean {
 
 export class SerialPortConnection {
     sp: SerialPort;
-    fragmentCache: dataBuffer;
     isOpen = () => {
         return this.sp.isOpen;
     };
@@ -34,47 +34,20 @@ export class SerialPortConnection {
         });
         this.sp.open(this.spOpenHandler);
         this.sp.on('error', this.spErrorHandler);
-        this.fragmentCache = [];
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
         const fn = (data: dataBuffer) => {
-            // console.log('收到', data);
             // data转数组:
             let arr = [...data];
-            if (arr.length < 3 || frameHeaderChecker(arr)) {
-                // 帧头无误
-                if (arr.length < 3 || arr.length < (5 + arr[3])) {
-                    this.fragmentCache.push(...data);
-                    return;
-                } else if (arr.length > (5 + arr[3])) {
-                    this.fragmentCache.length = 0;
-                    return
-                }
-                // 若长度符合则开始处理
-            } else if (this.fragmentCache.length === 0) { // 缓存不存在
-                // 丢帧
-                console.log('误码:', data);
-                return
-            } else {
-                // 缓存存在
-                if (this.fragmentCache.length !== 0) arr.unshift(...this.fragmentCache);
-                if (arr.length < (5 + arr[3])) {
-                    this.fragmentCache.length = 0;
-                    this.fragmentCache.push(...arr);
-                    return;
-                }
-                // 暂时
-                return
-            }
             // 清空缓存
-            this.fragmentCache.length = 0;
             if (isStatus(arr)) {
                 const result = statusParser(arr);
                 if (result !== '[Error]') wsConn.send(result);
             } else if (isSenser(arr)) {
                 // 传感器数据
             } else if (isRCData(data)) {
-
+                const result = ReceiverParser(data);
+                if (result !== '[Error]') wsConn.send(result);
             } else if (isPID1(arr)) {
                 // PID数据
             } else if (isPOWER(arr)) {
@@ -85,7 +58,7 @@ export class SerialPortConnection {
                 console.log('check!:', data)
             } else {
                 // 丢帧误码
-                console.log('丢帧误码', data)
+                // console.log('丢帧误码', data)
             }
         }
         this.sp.on('data', fn);

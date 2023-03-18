@@ -13,6 +13,7 @@
         </div>
         <div class="plane_status">
             <div class="title">接收机</div>
+            <Receiver></Receiver>
         </div>
         <div class="plane_status">
             <div class="title">传感器数据</div>
@@ -27,6 +28,7 @@
 import Model3d from '../components/model3d.vue'
 import FlightControlStatus from '../components/FligntControlStatus.vue'
 import Waves from '../components/Waves.vue'
+import Receiver from '../components/Receiver.vue'
 </script>
 
 <style lang="less" scoped>

@@ -100,6 +100,16 @@ export function PIDParser(data: dataBuffer): string {
     return createMessage(pid_data, ReceiveType.PID1);
 }
 
+export function ReceiverParser(data: dataBuffer): string {
+    const result = {
+        thr: (data[4] << 8) + data[5],
+        yaw: (data[6] << 8) + data[7],
+        rol: (data[8] << 8) + data[9],
+        pit: (data[10] << 8) + data[11],
+    }
+    return createMessage(result, ReceiveType.RCDATA);
+}
+
 export function createPID1(data: any[]) {
     const data_len = 18;
     const result = [0xaa, 0xaf, 0x10, data_len]

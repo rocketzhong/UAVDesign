@@ -1,4 +1,5 @@
 export enum ReceiveType {
     Status = '_Receive__Status',
-    PID1 = '_Receive__PID1'
+    PID1 = '_Receive__PID1',
+    RCDATA = '_Receive__RCDATA',
 }

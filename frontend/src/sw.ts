@@ -37,14 +37,24 @@ function createInitialization(sw: WebSocket) {
     sw.onmessage = (origin: any) => {
         try {
             const data = JSON.parse(origin.data);
-            if (data.type === ReceiveType.Status) {
-                const status = data.data;
-                planeStatus.ROL = status?.ROL;
-                planeStatus.PIT = status?.PIT;
-                planeStatus.YAW = status?.YAW;
-                planeStatus.ALT_USE = status?.ALT_USE / 100;
-                planeStatus.FLY_MODEL = status?.FLY_MODEL;
-                planeStatus.ARMED = status?.ARMED;
+            switch (data.type) {
+                case ReceiveType.Status: {
+                    const status = data.data;
+                    planeStatus.ROL = status?.ROL;
+                    planeStatus.PIT = status?.PIT;
+                    planeStatus.YAW = status?.YAW;
+                    planeStatus.ALT_USE = status?.ALT_USE / 100;
+                    planeStatus.FLY_MODEL = status?.FLY_MODEL;
+                    planeStatus.ARMED = status?.ARMED;
+                }; break;
+                case ReceiveType.RCDATA: {
+                    const r = data.data;
+                    if (Math.abs(r.thr - receiver.THR) > 10) receiver.THR = r.thr;
+                    if (Math.abs(r.yaw - receiver.YAW) > 10) receiver.YAW = r.yaw;
+                    if (Math.abs(r.rol - receiver.ROL) > 10) receiver.ROL = r.rol;
+                    if (Math.abs(r.pit - receiver.PIT) > 10) receiver.PIT = r.pit;
+                }; break
+                default: return;
             }
         } catch (error) {
             console.log(error)
@@ -53,3 +63,9 @@ function createInitialization(sw: WebSocket) {
     }
 }
 
+export const receiver = reactive({
+    THR: 1500,
+    YAW: 1500,
+    ROL: 1500,
+    PIT: 1500,
+})
