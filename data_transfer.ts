@@ -139,6 +139,7 @@ export function createPID1(data: any[]) {
 }
 
 export function POWERParser(data: dataBuffer) {
+    if (data.length < 9) return '[Error]'
     // 电池信息转换
     const power_data = {
         voltage: (data[4] << 8) + data[5],
@@ -148,6 +149,7 @@ export function POWERParser(data: dataBuffer) {
 }
 
 export function senserParser(data: dataBuffer): string {
+    if (data.length < 23) return '[Error]'
     const result = {
         ACC: [toInt16((data[4] << 8) + data[5]),
         toInt16((data[6] << 8) + data[7]),

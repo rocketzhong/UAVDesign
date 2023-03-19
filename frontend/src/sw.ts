@@ -77,7 +77,16 @@ function createInitialization(sw: WebSocket) {
                         pid_list_1[i].i = r?.[`PID${i + 1}_I`] || pid_list_1[i].i;
                         pid_list_1[i].d = r?.[`PID${i + 1}_D`] || pid_list_1[i].d;
                     }
-                }
+                }; break;
+                case ReceiveType.POWER: {
+                    const r = data.data;
+                    if (r.voltage === null || typeof r.voltage !== 'number') {
+                        console.log(r)
+                        return;
+                    }
+                    senserData.Current = r?.current / 100;
+                    senserData.Voltage = r?.voltage / 100;
+                }; break;
                 default: return;
             }
         } catch (error) {
@@ -103,7 +112,9 @@ export const senserData = reactive({
     GYRO_Z: 0,
     MAG_X: 0,
     MAG_Y: 0,
-    MAG_Z: 0
+    MAG_Z: 0,
+    Voltage: 0,
+    Current: 0
 })
 
 const mapper = (name: string) => { return { name: name, initalName: name, p: 0, i: 0, d: 0, } }
