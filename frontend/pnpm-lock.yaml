@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/three': ^0.149.0
   '@vitejs/plugin-vue': ^4.0.0
   echarts: ^5.4.1
   element-plus: ^2.2.32
@@ -11,6 +12,7 @@ specifiers:
   vue-router: ^4.1.6
 
 dependencies:
+  '@types/three': 0.149.0
   echarts: 5.4.1
   element-plus: 2.2.32_vue@3.2.47
   vue: 3.2.47
@@ -610,8 +612,18 @@ packages:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
     dev: false
 
+  /@types/three/0.149.0:
+    resolution: {integrity: sha512-fgNBm9LWc65ER/W0cvoXdC0iMy7Ke9e2CONmEr6Jt8sDSY3sw4DgOubZfmdZ747dkPhbQrgRQAWwDEr2S/7IEg==}
+    dependencies:
+      '@types/webxr': 0.5.1
+    dev: false
+
   /@types/web-bluetooth/0.0.16:
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
+    dev: false
+
+  /@types/webxr/0.5.1:
+    resolution: {integrity: sha512-xlFXPfgJR5vIuDefhaHuUM9uUgvPaXB6GKdXy2gdEh8gBWQZ2ul24AJz3foUd8NNKlSTQuWYJpCb1/pL81m1KQ==}
     dev: false
 
   /@vitejs/plugin-vue/4.0.0_vite@4.1.4+vue@3.2.47:

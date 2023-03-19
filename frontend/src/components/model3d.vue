@@ -2,14 +2,14 @@
     <canvas id="uav-model" width="400" height="400"></canvas>
 </template>
 
-<script setup>
-import { planeStatus } from '../sw.ts'
+<script lang="ts" setup>
+import { planeStatus } from '../sw'
 import { onMounted } from 'vue'
 import * as THREE from 'three';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 onMounted(() => {
-    const canvas = document.querySelector('#uav-model')
+    const canvas: HTMLCanvasElement = document.querySelector('#uav-model')!
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0xbbbbbb)
     // 创建渲染器
@@ -35,8 +35,8 @@ onMounted(() => {
     scene.add(hemiLight);
     // 加载模型
     const loader = new GLTFLoader().setPath('assets/');
-    let model
-    loader.load('uav.glb', (gltf) => {
+    let model:any
+    loader.load('uav.glb', (gltf:any) => {
         if (gltf.scene) model = gltf.scene;
         scene.add(gltf.scene);
     });
