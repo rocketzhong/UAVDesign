@@ -78,7 +78,8 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { sw } from '../sw.ts'
+import { sw } from '../sw'
+// import { import }
 const mapper = (name: string) => { return { name: name, initalName: name, p: 0, i: 0, d: 0, } }
 const init_names_1 = ['ROL速率', 'PIT速率', 'YAW速率', '自稳ROL', '自稳PIT', '自稳YAW']
 const pid_list_1 = reactive(init_names_1.map(mapper))

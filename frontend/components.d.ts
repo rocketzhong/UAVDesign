@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     Receiver: typeof import('./src/components/Receiver.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SenserData: typeof import('./src/components/SenserData.vue')['default']
     Wave: typeof import('./src/components/Wave.vue')['default']
     Waves: typeof import('./src/components/Waves.vue')['default']
   }

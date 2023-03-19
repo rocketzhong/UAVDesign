@@ -1,16 +1,16 @@
 <template>
     <div>
-       THR <el-progress :percentage="thr" :format="(e) => receiver.THR"/>
-       YAW <el-progress :percentage="yaw" :format="(e) => receiver.YAW" />
-       ROL <el-progress :percentage="rol" :format="(e) => receiver.ROL" />
-       PIT <el-progress :percentage="pit" :format="(e) => receiver.PIT" />
+       THR <el-progress :percentage="thr" :format="() => receiver.THR"/>
+       YAW <el-progress :percentage="yaw" :format="() => receiver.YAW" />
+       ROL <el-progress :percentage="rol" :format="() => receiver.ROL" />
+       PIT <el-progress :percentage="pit" :format="() => receiver.PIT" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { receiver } from '../sw'
 import { computed } from 'vue'
-function percentParser(num){
+function percentParser(num:number){
   const result = (num-980) / 10;
   if(result < 1) return 1;
   else if(result > 99) return 99;

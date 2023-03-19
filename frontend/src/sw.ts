@@ -49,11 +49,26 @@ function createInitialization(sw: WebSocket) {
                 }; break;
                 case ReceiveType.RCDATA: {
                     const r = data.data;
+                    // 去除不合理部分
+                    if (r.thr < 980 || r.yaw < 980 || r.rol < 980 || r.pit < 980) return;
+                    // 防抖
                     if (Math.abs(r.thr - receiver.THR) > 10) receiver.THR = r.thr;
                     if (Math.abs(r.yaw - receiver.YAW) > 10) receiver.YAW = r.yaw;
                     if (Math.abs(r.rol - receiver.ROL) > 10) receiver.ROL = r.rol;
                     if (Math.abs(r.pit - receiver.PIT) > 10) receiver.PIT = r.pit;
-                }; break
+                }; break;
+                case ReceiveType.Senser: {
+                    const r = data.data;
+                    senserData.ACC_X = r?.ACC[0];
+                    senserData.ACC_Y = r?.ACC[1];
+                    senserData.ACC_Z = r?.ACC[2];
+                    senserData.GYRO_X = r?.GYRO[0];
+                    senserData.GYRO_Y = r?.GYRO[1];
+                    senserData.GYRO_Z = r?.GYRO[2];
+                    senserData.MAG_X = r?.MAG[0];
+                    senserData.MAG_Y = r?.MAG[1];
+                    senserData.MAG_Z = r?.MAG[2];
+                }
                 default: return;
             }
         } catch (error) {
@@ -68,4 +83,16 @@ export const receiver = reactive({
     YAW: 1500,
     ROL: 1500,
     PIT: 1500,
+})
+
+export const senserData = reactive({
+    ACC_X: 0,
+    ACC_Y: 0,
+    ACC_Z: 0,
+    GYRO_X: 0,
+    GYRO_Y: 0,
+    GYRO_Z: 0,
+    MAG_X: 0,
+    MAG_Y: 0,
+    MAG_Z: 0
 })

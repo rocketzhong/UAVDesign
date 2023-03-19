@@ -4,6 +4,7 @@ export enum ReceiveType {
     PID1 = '_Receive__PID1',
     POWER = '_Receive__Power',
     RCDATA = '_Receive__RCDATA',
+    Senser = '_Receive__Senser',
 }
 export enum SendType {
     SPList = '_SerialPort__List',

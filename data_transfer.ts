@@ -146,3 +146,19 @@ export function POWERParser(data: dataBuffer) {
     }
     return createMessage(power_data, ReceiveType.POWER);
 }
+
+export function senserParser(data: dataBuffer): string {
+    const result = {
+        ACC: [toInt16((data[4] << 8) + data[5]),
+        toInt16((data[6] << 8) + data[7]),
+        toInt16((data[8] << 8) + data[9])],
+        GYRO: [toInt16((data[10] << 8) + data[11]),
+        toInt16((data[12] << 8) + data[13]),
+        toInt16((data[14] << 8) + data[15])],
+        MAG: [toInt16((data[16] << 8) + data[17]),
+        toInt16((data[18] << 8) + data[19]),
+        toInt16((data[20] << 8) + data[21])],
+    }
+    return createMessage(result, ReceiveType.Senser);
+
+}

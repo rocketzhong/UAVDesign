@@ -8,6 +8,7 @@ import {
     ReceiverParser,
     isCheck,
     isSenser,
+    senserParser,
     isPOWER,
     POWERParser,
 } from './data_transfer';
@@ -45,7 +46,9 @@ export class SerialPortConnection {
                 if (result !== '[Error]') wsConn.send(result);
             } else if (isSenser(arr)) {
                 // 传感器数据
-            } else if (isRCData(data)) {
+                const result = senserParser(arr);
+                if (result !== '[Error]') wsConn.send(result);
+            } else if (isRCData(arr)) {
                 const result = ReceiverParser(data);
                 if (result !== '[Error]') wsConn.send(result);
             } else if (isPID1(arr)) {
