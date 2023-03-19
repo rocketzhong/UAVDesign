@@ -97,7 +97,7 @@ export function PIDParser(data: dataBuffer): string {
         PID3_I: toInt16((data[18] << 8) + data[19]),
         PID3_D: toInt16((data[20] << 8) + data[21]),
     }
-    return createMessage(pid_data, ReceiveType.PID1);
+    return createMessage(pid_data, ReceiveType.PIDList);
 }
 
 export function ReceiverParser(data: dataBuffer): string {

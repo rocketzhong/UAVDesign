@@ -53,12 +53,14 @@ export class SerialPortConnection {
                 if (result !== '[Error]') wsConn.send(result);
             } else if (isPID1(arr)) {
                 // PID数据
+                const result = PIDParser(data);
+                if (result !== '[Error]') wsConn.send(result);
             } else if (isPOWER(arr)) {
                 // 电池数据
                 const result = POWERParser(arr);
                 if (result !== '[Error]') wsConn.send(result);
             } else if (isCheck(arr)) {
-                console.log('check!:', data)
+                // console.log('check!:', data)
             } else {
                 // 丢帧误码
                 // console.log('丢帧误码', data)

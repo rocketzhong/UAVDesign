@@ -68,6 +68,15 @@ function createInitialization(sw: WebSocket) {
                     senserData.MAG_X = r?.MAG[0];
                     senserData.MAG_Y = r?.MAG[1];
                     senserData.MAG_Z = r?.MAG[2];
+                }; break;
+                case ReceiveType.PIDList: {
+                    const r = data.data;
+                    console.log(r);
+                    for (let i = 0; i < 3; i++) {
+                        pid_list_1[i].p = r?.[`PID${i + 1}_P`] || pid_list_1[i].p;
+                        pid_list_1[i].i = r?.[`PID${i + 1}_I`] || pid_list_1[i].i;
+                        pid_list_1[i].d = r?.[`PID${i + 1}_D`] || pid_list_1[i].d;
+                    }
                 }
                 default: return;
             }
@@ -96,3 +105,11 @@ export const senserData = reactive({
     MAG_Y: 0,
     MAG_Z: 0
 })
+
+const mapper = (name: string) => { return { name: name, initalName: name, p: 0, i: 0, d: 0, } }
+const init_names_1 = ['ROL速率', 'PIT速率', 'YAW速率', '自稳ROL', '自稳PIT', '自稳YAW']
+const init_names_2 = ['高度速率', '高度保持', '位置速率', '位置保持', 'PID11', 'PID12']
+const init_names_3 = ['PID13', 'PID14', 'PID15', 'PID16', 'PID17', 'PID18']
+export const pid_list_1 = reactive(init_names_1.map(mapper))
+export const pid_list_2 = reactive(init_names_2.map(mapper))
+export const pid_list_3 = reactive(init_names_3.map(mapper))

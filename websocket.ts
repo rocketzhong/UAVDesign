@@ -29,6 +29,8 @@ server.on('connection', function (wsConn: WebSocket) {
         }
         if ('pidData' in buffer) {
             spConn.send(createPID1(buffer.pidData as any));
+        } else if ('getPID' in buffer) {
+            spConn.send([0xaa, 0xaf, 0x02, 0x01, 0x01, 0x5d]);
         }
     });
 
