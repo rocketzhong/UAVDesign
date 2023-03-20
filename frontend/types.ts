@@ -5,4 +5,5 @@ export enum ReceiveType {
     RCDATA = '_Receive__RCDATA',
     Senser = '_Receive__Senser',
     PIDList = '_Receive__PIDList',
+    SPIsOpen = '_Receive__SPIsOpen',
 }

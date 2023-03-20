@@ -1,20 +1,11 @@
 import { reactive, ref } from 'vue'
 import { ReceiveType } from '../types';
 export function createWebSocket() {
-    const sw = new WebSocket('ws://localhost:555');
+    const sw = new WebSocket('ws://192.168.195.1:555');
     createInitialization(sw);
     return sw;
 }
 export const sw = ref(createWebSocket());
-
-/**
- * 每1秒检测连接状态，开启重连
- */
-setInterval(() => {
-    if (sw.value.readyState > 1) {
-        sw.value = createWebSocket();
-    }
-}, 1000)
 
 export const planeStatus = reactive({
     ALT_USE: 0,
@@ -28,7 +19,7 @@ export const planeStatus = reactive({
 function createInitialization(sw: WebSocket) {
     sw.onopen = () => {
         console.log('连接成功!')
-        sw.send('浏览器连接上了!');
+        // sw.send('浏览器连接上了!');
     }
     sw.onclose = () => {
         console.log('连接关闭！')
@@ -38,6 +29,10 @@ function createInitialization(sw: WebSocket) {
         try {
             const data = JSON.parse(origin.data);
             switch (data.type) {
+                case ReceiveType.SPIsOpen: {
+                    const isOpen = data.data
+                    if (typeof isOpen === 'boolean') SPIsOpen.value = isOpen;
+                }; break;
                 case ReceiveType.Status: {
                     const status = data.data;
                     planeStatus.ROL = status?.ROL;
@@ -71,11 +66,27 @@ function createInitialization(sw: WebSocket) {
                 }; break;
                 case ReceiveType.PIDList: {
                     const r = data.data;
-                    console.log(r);
-                    for (let i = 0; i < 3; i++) {
-                        pid_list_1[i].p = r?.[`PID${i + 1}_P`] || pid_list_1[i].p;
-                        pid_list_1[i].i = r?.[`PID${i + 1}_I`] || pid_list_1[i].i;
-                        pid_list_1[i].d = r?.[`PID${i + 1}_D`] || pid_list_1[i].d;
+                    switch (r[9]) {
+                        case 0x10: {
+                            // PID1
+                            for (let i = 0; i < 3; i++) {
+                                pid_list_1[i].p = r?.[i * 3];
+                                pid_list_1[i].i = r?.[i * 3 + 1];
+                                pid_list_1[i].d = r?.[i * 3 + 2];
+                            }
+                        }; break;
+                        case 0x11: {
+                            // PID2
+                            for (let i = 0; i < 3; i++) {
+                                pid_list_1[i + 3].p = r?.[i * 3];
+                                pid_list_1[i + 3].i = r?.[i * 3 + 1];
+                                pid_list_1[i + 3].d = r?.[i * 3 + 2];
+                            }
+                        }; break;
+                        default: {
+                            console.log(r[9])
+                            return;
+                        }
                     }
                 }; break;
                 case ReceiveType.POWER: {
@@ -124,3 +135,11 @@ const init_names_3 = ['PID13', 'PID14', 'PID15', 'PID16', 'PID17', 'PID18']
 export const pid_list_1 = reactive(init_names_1.map(mapper))
 export const pid_list_2 = reactive(init_names_2.map(mapper))
 export const pid_list_3 = reactive(init_names_3.map(mapper))
+
+
+export const SPIsOpen = ref(false);
+export const changeSp = () => {
+    sw.value.send(JSON.stringify({
+        spConn: !SPIsOpen.value
+    }))
+}

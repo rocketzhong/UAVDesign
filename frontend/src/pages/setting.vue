@@ -45,9 +45,9 @@
 
     </div>
     <div class="pid_buttons">
-            <el-button size='large' @click="getPID">读取PID</el-button>
-            <el-button size='large' @click="sendPID">写入PID</el-button>
-            <el-button size='large'>恢复默认</el-button>
+        <el-button size='large' @click="getPID">读取PID</el-button>
+        <el-button size='large' @click="sendPID">写入PID</el-button>
+        <el-button size='large'>恢复默认</el-button>
     </div>
     <div>
         <div class="setting_wrapper flight_modes">
@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { sw,pid_list_1,pid_list_2,pid_list_3 } from '../sw'
+import { sw, pid_list_1, pid_list_2, pid_list_3 } from '../sw'
 
 enum FlightMode {
     MODE1 = 0,
@@ -95,14 +95,14 @@ const flight_modes: any[] = [aux1, aux2, aux3]
 
 function getPID() {
     sw.value.send(JSON.stringify({
-        getPID:true
+        getPID: true
     }))
 }
 
 function sendPID() {
-    
+
     sw.value.send(JSON.stringify({
-        pidData:pid_list_1
+        pidData: pid_list_1
     }))
 }
 </script>
@@ -177,8 +177,8 @@ function sendPID() {
     background: rgb(240, 240, 240);
     height: 100px;
     align-items: center;
-    display:flex;
-    justify-content:space-around;
+    display: flex;
+    justify-content: space-around;
 }
 
 .pid_setting_wrapper {

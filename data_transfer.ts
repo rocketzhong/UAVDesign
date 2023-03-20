@@ -86,21 +86,30 @@ export function statusParser(data: dataBuffer): string {
 
 
 export function PIDParser(data: dataBuffer): string {
-    const pid_data = {
-        PID1_P: toInt16((data[4] << 8) + data[5]),
-        PID1_I: toInt16((data[6] << 8) + data[7]),
-        PID1_D: toInt16((data[8] << 8) + data[9]),
-        PID2_P: toInt16((data[10] << 8) + data[11]),
-        PID2_I: toInt16((data[12] << 8) + data[13]),
-        PID2_D: toInt16((data[14] << 8) + data[15]),
-        PID3_P: toInt16((data[16] << 8) + data[17]),
-        PID3_I: toInt16((data[18] << 8) + data[19]),
-        PID3_D: toInt16((data[20] << 8) + data[21]),
-    }
+    const len = data[3];
+    if (data[4 + len] !== getSum(data, 5 + len))
+        return '[Error]';
+    const pid_data = [
+        toInt16((data[4] << 8) + data[5]),
+        toInt16((data[6] << 8) + data[7]),
+        toInt16((data[8] << 8) + data[9]),
+        toInt16((data[10] << 8) + data[11]),
+        toInt16((data[12] << 8) + data[13]),
+        toInt16((data[14] << 8) + data[15]),
+        toInt16((data[16] << 8) + data[17]),
+        toInt16((data[18] << 8) + data[19]),
+        toInt16((data[20] << 8) + data[21]),
+        // type : PID1 -> 0x10 
+        data[4]
+    ]
+
     return createMessage(pid_data, ReceiveType.PIDList);
 }
 
 export function ReceiverParser(data: dataBuffer): string {
+    const len = data[3];
+    if (data[4 + len] !== getSum(data, 5 + len))
+        return '[Error]';
     const result = {
         thr: (data[4] << 8) + data[5],
         yaw: (data[6] << 8) + data[7],

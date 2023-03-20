@@ -9,7 +9,7 @@
         </div>
         <div class="plane_status">
             <div class="title">状态波形</div>
-            <Waves/>
+            <Waves />
         </div>
         <div class="plane_status">
             <div class="title">接收机</div>
@@ -37,6 +37,7 @@ import SenserData from '../components/SenserData.vue'
 .plane_status_wrapper {
     display: flex;
     justify-content: space-between;
+    min-width: 1100px;
 }
 
 .plane_status {

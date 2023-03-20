@@ -72,7 +72,6 @@ export class SerialPortConnection {
     spOpenHandler = (err: Error | null) => {
         console.log('sp.IsOpen:', this.sp?.isOpen || false);
         if (err) {
-            console.clear();
             console.log("打开串口COM3错误:" + err);
         } else {
             console.log("打开串口成功！")
