@@ -9,28 +9,35 @@ const server = new WebSocketServer({ port: 555 });
 let spConn: SerialPortConnection | null = null;
 
 server.on('connection', function (wsConn: WebSocket) {
-    console.log("WebSocket创建新连接");
-
+    console.log("WebSocket连接成功!");
     SerialPort.list().then((list) => {
         wsConn.send(createMessage(list.map(i => i.path), SendType.SPList))
     })
     // 实时给浏览器发送串口开启状态
     const timer = setInterval(() => {
-        wsConn.send(createMessage(spConn && spConn.isOpen(), ReceiveType.SPIsOpen))
+        wsConn.send(createMessage(spConn !== null && spConn.isOpen(), ReceiveType.SPIsOpen))
     }, 200)
     spConn?.onMessage(wsConn)
     wsConn.on('message', function message(buffer) {
         // 地面站后台收到浏览器指令数据data
         // 串口发送至飞控
-        if ('spConn' in buffer) {
-            // if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
-            return;
-        }
-        if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
         try {
             buffer = JSON.parse(buffer.toString());
         } catch (e) {
+            return;
         }
+        if ('spConn' in buffer) {
+            // 重启连接
+            if (buffer.spConn) {
+                if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
+                spConn?.onMessage(wsConn)
+            } else {
+                if (spConn?.isOpen()) spConn.close();
+            }
+            return;
+        }
+        if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
+
         if ('pidData' in buffer) {
             spConn.send(createPID1(buffer.pidData as any));
         } else if ('getPID' in buffer) {

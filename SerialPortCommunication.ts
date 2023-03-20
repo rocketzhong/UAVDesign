@@ -35,6 +35,7 @@ export class SerialPortConnection {
         });
         this.sp.open(this.spOpenHandler);
         this.sp.on('error', this.spErrorHandler);
+        this.sp.on('close', this.spCloseHandler);
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
         const fn = (data: dataBuffer) => {
@@ -81,6 +82,9 @@ export class SerialPortConnection {
     spErrorHandler(error: Error) {
         console.log('error: ' + error)
     }
+    spCloseHandler(msg: string) {
+        console.log('连接已关闭：', msg)
+    }
     send = (bufferStr: number[]) => {
         // 地面站/遥控器发送，飞控接收
         const buf = Buffer.from(bufferStr)
@@ -92,5 +96,8 @@ export class SerialPortConnection {
                 console.log("主动下发的命令：" + buf.toString('hex'));
             }
         })
+    }
+    close = () => {
+        this.sp.close()
     }
 }

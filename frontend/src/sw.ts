@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { ReceiveType } from '../types';
 export function createWebSocket() {
     const sw = new WebSocket('ws://192.168.195.1:555');
@@ -138,6 +138,11 @@ export const pid_list_3 = reactive(init_names_3.map(mapper))
 
 
 export const SPIsOpen = ref(false);
+watch(SPIsOpen, (newVal, oldVal) => {
+    if (newVal === oldVal) return;
+    if (newVal) ElMessage.success('成功连接!')
+    else ElMessage.warning('断开连接!');
+})
 export const changeSp = () => {
     sw.value.send(JSON.stringify({
         spConn: !SPIsOpen.value
