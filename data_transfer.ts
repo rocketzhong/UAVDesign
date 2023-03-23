@@ -86,9 +86,9 @@ export function statusParser(data: dataBuffer): string {
 
 
 export function PIDParser(data: dataBuffer): string {
-    const len = data[3];
-    if (data[4 + len] !== getSum(data, 5 + len))
-        return '[Error]';
+    // const len = data[3];
+    // if (data[4 + len] !== getSum(data, 5 + len))
+    //     return '[Error]';
     const pid_data = [
         toInt16((data[4] << 8) + data[5]),
         toInt16((data[6] << 8) + data[7]),
@@ -99,8 +99,7 @@ export function PIDParser(data: dataBuffer): string {
         toInt16((data[16] << 8) + data[17]),
         toInt16((data[18] << 8) + data[19]),
         toInt16((data[20] << 8) + data[21]),
-        // type : PID1 -> 0x10 
-        data[4]
+        data[2]
     ]
 
     return createMessage(pid_data, ReceiveType.PIDList);

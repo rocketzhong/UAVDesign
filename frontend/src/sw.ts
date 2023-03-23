@@ -108,10 +108,10 @@ function createInitialization(sw: WebSocket) {
 }
 
 export const receiver = reactive({
-    THR: 1500,
-    YAW: 1500,
-    ROL: 1500,
-    PIT: 1500,
+    THR: 1018,
+    YAW: 1473,
+    ROL: 1501,
+    PIT: 1499,
 })
 
 export const senserData = reactive({

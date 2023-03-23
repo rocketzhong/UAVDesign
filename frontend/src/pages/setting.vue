@@ -48,6 +48,7 @@
         <el-button size='large' @click="getPID">读取PID</el-button>
         <el-button size='large' @click="sendPID">写入PID</el-button>
         <el-button size='large'>恢复默认</el-button>
+        <el-button size='large' @click="saveData">保存</el-button>
     </div>
     <div>
         <div class="setting_wrapper flight_modes">
@@ -77,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import { sw, pid_list_1, pid_list_2, pid_list_3 } from '../sw'
 
 enum FlightMode {
@@ -92,7 +93,6 @@ const aux3 = reactive(Object.create(o))
 
 const flight_modes: any[] = [aux1, aux2, aux3]
 
-
 function getPID() {
     sw.value.send(JSON.stringify({
         getPID: true
@@ -100,10 +100,13 @@ function getPID() {
 }
 
 function sendPID() {
-
     sw.value.send(JSON.stringify({
         pidData: pid_list_1
     }))
+}
+
+function saveData() {
+    // localStorage.setItem('pidData', JSON.stringify([toRaw(pid_list_1), toRaw(pid_list_2), toRaw(pid_list_3)]))
 }
 </script>
 

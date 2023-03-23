@@ -39,7 +39,14 @@ server.on('connection', function (wsConn: WebSocket) {
         if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
 
         if ('pidData' in buffer) {
-            spConn.send(createPID1(buffer.pidData as any));
+            spConn?.send(createPID1((buffer as any).pidData));
+
+            // let count = 0;
+            // const t = setInterval(() => {
+            //     count++;
+            //     if (count > 5) clearInterval(t);
+            //     spConn?.send(createPID1((buffer as any).pidData));
+            // }, 500)
         } else if ('getPID' in buffer) {
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0x01, 0x5d]);
         }
