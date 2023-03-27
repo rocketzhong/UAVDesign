@@ -20,8 +20,36 @@ function frameHeaderChecker(data: dataBuffer): boolean {
     return data[0] === 0xaa && data[1] === 0xaa;
 }
 
+function dataManager(wsConn: WebSocket, arr: number[]) {
+    if (isStatus(arr)) {
+        const result = statusParser(arr);
+        if (result !== '[Error]') wsConn.send(result); 0
+    } else if (isSenser(arr)) {
+        // 传感器数据
+        const result = senserParser(arr);
+        if (result !== '[Error]') wsConn.send(result);
+    } else if (isRCData(arr)) {
+        const result = ReceiverParser(arr);
+        if (result !== '[Error]') wsConn.send(result);
+    } else if (isPID1(arr)) {
+        // PID数据
+        const result = PIDParser(arr);
+        // console.log(first)
+        if (result !== '[Error]') wsConn.send(result);
+    } else if (isPOWER(arr)) {
+        // 电池数据
+        const result = POWERParser(arr);
+        if (result !== '[Error]') wsConn.send(result);
+    } else if (isCheck(arr)) {
+        // console.log('check!:', data)
+    } else {
+        return arr;
+    }
+}
+
 export class SerialPortConnection {
     sp: SerialPort;
+    bufferCache: number[];
     isOpen = () => {
         return this.sp.isOpen;
     };
@@ -36,35 +64,39 @@ export class SerialPortConnection {
         this.sp.open(this.spOpenHandler);
         this.sp.on('error', this.spErrorHandler);
         this.sp.on('close', this.spCloseHandler);
+        this.bufferCache = [];
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
         const fn = (data: dataBuffer) => {
             // data转数组:
             let arr = [...data];
-            // 清空缓存
-            if (isStatus(arr)) {
-                const result = statusParser(arr);
-                if (result !== '[Error]') wsConn.send(result);
-            } else if (isSenser(arr)) {
-                // 传感器数据
-                const result = senserParser(arr);
-                if (result !== '[Error]') wsConn.send(result);
-            } else if (isRCData(arr)) {
-                const result = ReceiverParser(data);
-                if (result !== '[Error]') wsConn.send(result);
-            } else if (isPID1(arr)) {
-                // PID数据
-                const result = PIDParser(data);
-                if (result !== '[Error]') wsConn.send(result);
-            } else if (isPOWER(arr)) {
-                // 电池数据
-                const result = POWERParser(arr);
-                if (result !== '[Error]') wsConn.send(result);
-            } else if (isCheck(arr)) {
-                // console.log('check!:', data)
+            const errorData = [];
+            while (this.bufferCache.length > 1 && !frameHeaderChecker(this.bufferCache)) {
+                const k = this.bufferCache.shift();
+                errorData.push(k);
+            }
+            if (errorData.length > 0) console.warn('误码:', errorData);
+            if (this.bufferCache.length !== 0) {
+                const k = this.bufferCache;
+                if (k.length > 4 && k.length >= (k[3] + 5)) {
+                    const concatData = k.splice(0, k[3] + 5);
+                    dataManager(wsConn, concatData);
+                }
+            }
+            if (frameHeaderChecker(arr)) {
+                if (arr.length > 4 && arr.length === (arr[3] + 5)) {
+                    // 长度一次通过
+                    const res = dataManager(wsConn, arr);
+                    if (res !== undefined) {
+                        console.warn('误码', Buffer.from(arr));
+                    }
+                } else {
+                    this.bufferCache.push(...arr);
+                }
+                return;
             } else {
-                // 丢帧误码
-                // console.log('丢帧误码', data)
+                if (this.bufferCache.length !== 0 || arr[0] === 0xaa) this.bufferCache.push(...arr);
+                else console.warn('丢帧!', data);
             }
         }
         this.sp.on('data', fn);

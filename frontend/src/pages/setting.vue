@@ -47,8 +47,9 @@
     <div class="pid_buttons">
         <el-button size='large' @click="getPID">读取PID</el-button>
         <el-button size='large' @click="sendPID">写入PID</el-button>
-        <el-button size='large'>恢复默认</el-button>
+        <el-button size='large' @click="setZero">清零</el-button>
         <el-button size='large' @click="saveData">保存</el-button>
+        <el-button size='large' @click="recoverData">恢复</el-button>
     </div>
     <div>
         <div class="setting_wrapper flight_modes">
@@ -106,7 +107,22 @@ function sendPID() {
 }
 
 function saveData() {
-    // localStorage.setItem('pidData', JSON.stringify([toRaw(pid_list_1), toRaw(pid_list_2), toRaw(pid_list_3)]))
+    localStorage.setItem('pidData', JSON.stringify([toRaw(pid_list_1), toRaw(pid_list_2), toRaw(pid_list_3)]))
+}
+
+function setZero() {
+    for (const pid of pid_list_1) {
+        pid.p = 0;
+        pid.i = 0;
+        pid.d = 0;
+    }
+}
+
+function recoverData() {
+    //    const arr = localStorage.getItem('pidData') || []
+    //    if(arr.length === 0) return;
+    //    for(co)
+    //    arr[0]
 }
 </script>
 
