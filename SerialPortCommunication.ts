@@ -1,5 +1,6 @@
 import { SerialPort } from 'serialport'
 import {
+    getSum,
     isStatus,
     statusParser,
     isPID1,
@@ -21,6 +22,10 @@ function frameHeaderChecker(data: dataBuffer): boolean {
 }
 
 function dataManager(wsConn: WebSocket, arr: number[]) {
+    if (getSum(arr, arr.length) !== arr.at(-1)) {
+        // 校验不通过
+        return arr;
+    }
     if (isStatus(arr)) {
         const result = statusParser(arr);
         if (result !== '[Error]') wsConn.send(result); 0
@@ -69,7 +74,8 @@ export class SerialPortConnection {
     onMessage(wsConn: WebSocket, callback?: Function) {
         const fn = (data: dataBuffer) => {
             // data转数组:
-            let arr = [...data];
+            const arr = [...data];
+            // 检查此时bufferCache内是否含有不符帧头的数据，清除并通报
             const errorData = [];
             while (this.bufferCache.length > 1 && !frameHeaderChecker(this.bufferCache)) {
                 const k = this.bufferCache.shift();
@@ -88,7 +94,7 @@ export class SerialPortConnection {
                     // 长度一次通过
                     const res = dataManager(wsConn, arr);
                     if (res !== undefined) {
-                        console.warn('误码', Buffer.from(arr));
+                        console.warn('误码', data);
                     }
                 } else {
                     this.bufferCache.push(...arr);

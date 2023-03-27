@@ -1,10 +1,10 @@
 import { dataBuffer, ReceiveType, SendType } from "./types";
 /**
- * 计算sum验证
+ * 计算sum验证校验位
  * @param {dataBuffer} data
- * @return {*} 
+ * @return {number} 校验位计算结果
  */
-function getSum(data: dataBuffer, len: number) {
+export function getSum(data: dataBuffer, len: number): number {
     // 数组求和
     let sum = 0;
     len--;
