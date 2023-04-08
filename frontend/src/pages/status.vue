@@ -1,6 +1,7 @@
 <template>
     <div>
         <Model3d />
+        <Compass></Compass>
     </div>
     <div class="plane_status_wrapper">
         <div class="plane_status">
@@ -27,6 +28,7 @@
 
 <script lang="ts" setup>
 import Model3d from '../components/model3d.vue'
+import Compass from '../components/Compass.vue'
 import FlightControlStatus from '../components/FligntControlStatus.vue'
 import Waves from '../components/Waves.vue'
 import Receiver from '../components/Receiver.vue'
