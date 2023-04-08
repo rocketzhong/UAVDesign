@@ -21,14 +21,17 @@ function frameHeaderChecker(data: dataBuffer): boolean {
     return data[0] === 0xaa && data[1] === 0xaa;
 }
 
+// 计数，对姿态数据进行节流
+let k = 0;
 function dataManager(wsConn: WebSocket, arr: number[]) {
     if (getSum(arr, arr.length) !== arr.at(-1)) {
         // 校验不通过
         return arr;
     }
     if (isStatus(arr)) {
+        // 姿态数据
         const result = statusParser(arr);
-        if (result !== '[Error]') wsConn.send(result); 0
+        if (result !== '[Error]' && k++ === 10) { wsConn.send(result); k = 0; }
     } else if (isSenser(arr)) {
         // 传感器数据
         const result = senserParser(arr);
@@ -72,7 +75,7 @@ export class SerialPortConnection {
         this.bufferCache = [];
     }
     onMessage(wsConn: WebSocket, callback?: Function) {
-        const fn = (data: dataBuffer) => {
+        const fn = (data: Buffer) => {
             // data转数组:
             const arr = [...data];
             // 检查此时bufferCache内是否含有不符帧头的数据，清除并通报
@@ -82,6 +85,7 @@ export class SerialPortConnection {
                 errorData.push(k);
             }
             if (errorData.length > 0) console.warn('误码:', errorData);
+            // 此时剩余数据帧头符合
             if (this.bufferCache.length !== 0) {
                 const k = this.bufferCache;
                 if (k.length > 4 && k.length >= (k[3] + 5)) {
