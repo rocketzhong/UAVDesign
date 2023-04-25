@@ -77,7 +77,8 @@ export function statusParser(data: dataBuffer): string {
         ROL: toInt16((data[4] << 8) + data[5]) / 100, // int16, 横滚角
         PIT: toInt16((data[6] << 8) + data[7]) / 100, // int16, 横滚角
         YAW: toInt16((data[8] << 8) + data[9]) / 100, // int16, 偏航角
-        ALT_USE: toInt32((data[10] << 24) + (data[11] << 16) + (data[12] << 8) + data[13]), // int32 高度cm
+        // int32 高度cm
+        ALT_USE: toInt32((data[10] << 24) + (data[11] << 16) + (data[12] << 8) + data[13]),
         FLY_MODEL: data[14], // uint8
         ARMED: data[15], // uint8 0加锁 1解锁
     }
@@ -86,9 +87,10 @@ export function statusParser(data: dataBuffer): string {
 
 
 export function PIDParser(data: dataBuffer): string {
-    // const len = data[3];
-    // if (data[4 + len] !== getSum(data, 5 + len))
-    //     return '[Error]';
+    // 校验
+    const len = data[3];
+    if (data[4 + len] !== getSum(data, 5 + len))
+        return '[Error]';
     const pid_data = [
         toInt16((data[4] << 8) + data[5]),
         toInt16((data[6] << 8) + data[7]),
@@ -118,7 +120,7 @@ export function ReceiverParser(data: dataBuffer): string {
     return createMessage(result, ReceiveType.RCDATA);
 }
 
-export function createPID1(data: any[]) {
+export function createPID1(data: any[]): number[] {
     const data_len = 18;
     const result = [0xaa, 0xaf, 0x10, data_len]
     // PID1（ROL速率）
@@ -172,3 +174,5 @@ export function senserParser(data: dataBuffer): string {
     return createMessage(result, ReceiveType.Senser);
 
 }
+
+export const ackValue: { value: number } = { value: NaN };

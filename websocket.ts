@@ -2,7 +2,7 @@ import { SerialPortConnection } from './SerialPortCommunication'
 import { SerialPort } from 'serialport'
 
 import { WebSocketServer, WebSocket } from 'ws'
-import { createMessage, createPID1 } from './data_transfer';
+import { createMessage, createPID1, ackValue } from './data_transfer';
 import { ReceiveType, SendType } from './types';
 
 const server = new WebSocketServer({ port: 555 });
@@ -39,16 +39,37 @@ server.on('connection', function (wsConn: WebSocket) {
         if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
 
         if ('pidData' in buffer) {
-            spConn?.send(createPID1((buffer as any).pidData));
-
-            // let count = 0;
-            // const t = setInterval(() => {
-            //     count++;
-            //     if (count > 5) clearInterval(t);
-            //     spConn?.send(createPID1((buffer as any).pidData));
-            // }, 500)
+            // 写入PID
+            const PID1 = createPID1((buffer as any).pidData);
+            const sum = PID1[22];
+            let count = 0;
+            const t = setInterval(() => {
+                count++;
+                if (sum === ackValue.value) {
+                    // 发送成功
+                    wsConn.send(createMessage({ success: true, msg: '写入成功!' }, ReceiveType.SendPIDMessage))
+                    clearInterval(t);
+                    ackValue.value = NaN;
+                    return;
+                }
+                if (count > 5) {
+                    // 发送失败
+                    wsConn.send(createMessage({ success: false, msg: '写入超时，失败!' }, ReceiveType.SendPIDMessage))
+                    clearInterval(t);
+                    ackValue.value = NaN;
+                    return;
+                }
+                spConn?.send(PID1);
+            }, 500)
         } else if ('getPID' in buffer) {
+            // 指令获取PID1
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0x01, 0x5d]);
+        } else if ('savePID' in buffer) {
+            // 保存
+            spConn.send([0xaa, 0xaf, 0x02, 0x01, 0xA2, 0xFE]);
+        } else if ('restorePID' in buffer) {
+            // 恢复
+            spConn.send([0xaa, 0xaf, 0x02, 0x01, 0xA3, 0xFF]);
         }
     });
 

@@ -8,14 +8,14 @@
             </div>
             <div class="protractor_wrapper">
                 <img class="campass_img circle_item" src="../../assets/protractor-223-hi.png" :style="{
-                    transform: 'Rotate(' + (90 + planeStatus.ROL) + 'deg)'
-                }">
+                        transform: 'Rotate(' + (90 + planeStatus.ROL) + 'deg)'
+                    }">
             </div>
             <div class="vertical_ruler_wrapper">
                 <img src="../../assets/R.jpg" :style="{
-                    transform: 'translateY(' + (-620 + planeStatus.PIT / 90 * 770) + 'px) rotate(' + planeStatus.ROL + 'deg)',
+                        transform: 'translateY(' + (-620 + planeStatus.PIT / 90 * 770) + 'px) rotate(' + planeStatus.ROL + 'deg)',
                         transformOrigin: 'center ' + ((90 - planeStatus.PIT) / 180 * 100) + '%'
-                }">
+                    }">
             </div>
         </div>
     </span>
@@ -84,10 +84,6 @@ import { planeStatus } from '../sw'
     // 此时高度为1539px
     img {
         width: 100%;
-        // transform: translateY(-620px) rotate(0deg);
-        // 60度
-        transform: translateY(-110px) rotate(20deg);
-        transform-origin: center 17%;
     }
 }
 </style>

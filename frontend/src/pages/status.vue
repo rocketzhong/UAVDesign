@@ -22,6 +22,7 @@
         </div>
         <div class="plane_status">
             <div class="title">GPS信息</div>
+            <GPSData />
         </div>
     </div>
 </template>
@@ -33,6 +34,7 @@ import FlightControlStatus from '../components/FligntControlStatus.vue'
 import Waves from '../components/Waves.vue'
 import Receiver from '../components/Receiver.vue'
 import SenserData from '../components/SenserData.vue'
+import GPSData from '../components/GPSData.vue'
 </script>
 
 <style lang="less" scoped>

@@ -107,10 +107,14 @@ function sendPID() {
 }
 
 function saveData() {
-    localStorage.setItem('pidData', JSON.stringify([toRaw(pid_list_1), toRaw(pid_list_2), toRaw(pid_list_3)]))
+    sw.value.send(JSON.stringify({
+        savePID: true
+    }))
+    // localStorage.setItem('pidData', JSON.stringify([toRaw(pid_list_1), toRaw(pid_list_2), toRaw(pid_list_3)]))
 }
 
 function setZero() {
+    ElMessage.warning('清零');
     for (const pid of pid_list_1) {
         pid.p = 0;
         pid.i = 0;
@@ -119,10 +123,9 @@ function setZero() {
 }
 
 function recoverData() {
-    //    const arr = localStorage.getItem('pidData') || []
-    //    if(arr.length === 0) return;
-    //    for(co)
-    //    arr[0]
+    sw.value.send(JSON.stringify({
+        restorePID: true
+    }))
 }
 </script>
 

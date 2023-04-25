@@ -4,6 +4,7 @@ import {
     isStatus,
     statusParser,
     isPID1,
+    isPID2,
     PIDParser,
     isRCData,
     ReceiverParser,
@@ -12,6 +13,7 @@ import {
     senserParser,
     isPOWER,
     POWERParser,
+    ackValue
 } from './data_transfer';
 import { dataBuffer } from './types';
 import { WebSocket } from 'ws'
@@ -31,7 +33,10 @@ function dataManager(wsConn: WebSocket, arr: number[]) {
     if (isStatus(arr)) {
         // 姿态数据
         const result = statusParser(arr);
-        if (result !== '[Error]' && k++ === 10) { wsConn.send(result); k = 0; }
+        // if (result !== '[Error]' && k++ === 10) { 
+        wsConn.send(result);
+        //  k = 0; 
+        // }
     } else if (isSenser(arr)) {
         // 传感器数据
         const result = senserParser(arr);
@@ -44,12 +49,17 @@ function dataManager(wsConn: WebSocket, arr: number[]) {
         const result = PIDParser(arr);
         // console.log(first)
         if (result !== '[Error]') wsConn.send(result);
+    } else if (isPID2(arr)) {
+        // PID数据
+        const result = PIDParser(arr);
+        // console.log(first)
+        if (result !== '[Error]') wsConn.send(result);
     } else if (isPOWER(arr)) {
         // 电池数据
         const result = POWERParser(arr);
         if (result !== '[Error]') wsConn.send(result);
     } else if (isCheck(arr)) {
-        // console.log('check!:', data)
+        ackValue.value = arr.at(-2) || NaN;
     } else {
         return arr;
     }

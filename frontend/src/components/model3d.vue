@@ -7,7 +7,7 @@ import { planeStatus } from '../sw'
 import { onMounted } from 'vue'
 import * as THREE from 'three';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 onMounted(() => {
     const canvas: HTMLCanvasElement = document.querySelector('#uav-model')!
     const scene = new THREE.Scene()
@@ -35,8 +35,8 @@ onMounted(() => {
     scene.add(hemiLight);
     // 加载模型
     const loader = new GLTFLoader().setPath('assets/');
-    let model:any
-    loader.load('uav.glb', (gltf:any) => {
+    let model: any
+    loader.load('uav.glb', (gltf: any) => {
         if (gltf.scene) model = gltf.scene;
         scene.add(gltf.scene);
     });

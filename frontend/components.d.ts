@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
     FligntControlStatus: typeof import('./src/components/FligntControlStatus.vue')['default']
+    GPSData: typeof import('./src/components/GPSData.vue')['default']
     Model3d: typeof import('./src/components/model3d.vue')['default']
     Receiver: typeof import('./src/components/Receiver.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

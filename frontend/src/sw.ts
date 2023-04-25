@@ -1,7 +1,7 @@
 import { reactive, ref, watch } from 'vue'
 import { ReceiveType } from '../types';
 export function createWebSocket() {
-    const sw = new WebSocket('ws://192.168.195.1:555');
+    const sw = new WebSocket('ws://localhost:555');
     createInitialization(sw);
     return sw;
 }
@@ -98,6 +98,14 @@ function createInitialization(sw: WebSocket) {
                     senserData.Current = r?.current / 100;
                     senserData.Voltage = r?.voltage / 100;
                 }; break;
+                case ReceiveType.SendPIDMessage: {
+                    const r = data.data;
+                    if (r.success) {
+                        ElMessage.success('写入成功!')
+                    } else {
+                        ElMessage.error('发送超时!')
+                    }
+                }
                 default: return;
             }
         } catch (error) {

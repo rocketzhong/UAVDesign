@@ -11,7 +11,7 @@
 import { receiver } from '../sw'
 import { computed } from 'vue'
 function percentParser(num: number) {
-  const result = (num - 980) / 10;
+  const result = (num - 990) / 10;
   if (result < 1) return 1;
   else if (result > 99) return 99;
   else return result;

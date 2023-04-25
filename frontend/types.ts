@@ -6,4 +6,5 @@ export enum ReceiveType {
     Senser = '_Receive__Senser',
     PIDList = '_Receive__PIDList',
     SPIsOpen = '_Receive__SPIsOpen',
+    SendPIDMessage = '_Receive__SendPIDMessage'
 }
