@@ -93,7 +93,23 @@ server.on('connection', function (wsConn: WebSocket) {
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0x01, 0x5d]);
         } else if ('savePID' in buffer) {
             // 保存
-            spConn.send([0xaa, 0xaf, 0x02, 0x01, 0xA2, 0xFE]);
+            let count = 0;
+            const t = setInterval(() => {
+                count++;
+                if (0xFE === ackValue.value) {
+                    // 发送成功
+                    wsConn.send(createMessage({ success: true, msg: '保存成功!' }, ReceiveType.SendPIDMessage))
+                    clearInterval(t);
+                    ackValue.value = NaN; return;
+                }
+                if (count > 5) {
+                    // 发送失败
+                    wsConn.send(createMessage({ success: false, msg: '保存超时，失败!' }, ReceiveType.SendPIDMessage))
+                    clearInterval(t);
+                    ackValue.value = NaN; return;
+                }
+                spConn?.send([0xaa, 0xaf, 0x02, 0x01, 0xA2, 0xFE]);
+            }, 500)
         } else if ('restorePID' in buffer) {
             // 恢复
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0xA3, 0xFF]);

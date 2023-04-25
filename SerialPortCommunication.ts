@@ -60,6 +60,7 @@ function dataManager(wsConn: WebSocket, arr: number[]) {
         if (result !== '[Error]') wsConn.send(result);
     } else if (isCheck(arr)) {
         ackValue.value = arr.at(-2) || NaN;
+        console.log('收到check', Buffer.from(arr))
     } else {
         return arr;
     }
