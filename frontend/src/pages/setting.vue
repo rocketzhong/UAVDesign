@@ -102,7 +102,10 @@ function getPID() {
 
 function sendPID() {
     sw.value.send(JSON.stringify({
-        pidData: pid_list_1
+        pid1Data: pid_list_1
+    }))
+    sw.value.send(JSON.stringify({
+        pid2Data: pid_list_1
     }))
 }
 

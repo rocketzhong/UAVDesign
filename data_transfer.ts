@@ -148,6 +148,36 @@ export function createPID1(data: any[]): number[] {
     return result
 }
 
+export function createPID2(data: any[]): number[] {
+    console.log(data)
+    const data_len = 18;
+    const result = [0xaa, 0xaf, 0x11, data_len]
+    //  自稳ROL
+    result[4] = Math.floor(data[3].p / 256);
+    result[5] = data[3].p % 256
+    result[6] = Math.floor(data[3].i / 256);
+    result[7] = data[3].i % 256
+    result[8] = Math.floor(data[3].d / 256);
+    result[9] = data[3].d % 256
+    // 自稳PIT
+    result[10] = Math.floor(data[4].p / 256);
+    result[11] = data[4].p % 256
+    result[12] = Math.floor(data[4].i / 256);
+    result[13] = data[4].i % 256
+    result[14] = Math.floor(data[4].d / 256);
+    result[15] = data[4].d % 256
+    // 自稳YAW
+    result[16] = Math.floor(data[5].p / 256);
+    result[17] = data[5].p % 256
+    result[18] = Math.floor(data[5].i / 256);
+    result[19] = data[5].i % 256
+    result[20] = Math.floor(data[5].d / 256);
+    result[21] = data[5].d % 256
+    result[22] = getSum(result, 5 + data_len)
+    return result
+}
+
+
 export function POWERParser(data: dataBuffer) {
     if (data.length < 9) return '[Error]'
     // 电池信息转换

@@ -101,9 +101,9 @@ function createInitialization(sw: WebSocket) {
                 case ReceiveType.SendPIDMessage: {
                     const r = data.data;
                     if (r.success) {
-                        ElMessage.success('写入成功!')
+                        ElMessage.success(r.msg)
                     } else {
-                        ElMessage.error('发送超时!')
+                        ElMessage.error(r.msg)
                     }
                 }
                 default: return;

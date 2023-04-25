@@ -22,9 +22,8 @@ const rol = computed(() => percentParser(receiver.ROL))
 const pit = computed(() => percentParser(receiver.PIT))
 </script>
 
-<style scoped>
-.demo-progress .el-progress--line {
-  margin-bottom: 15px;
-  width: 350px;
+<style>
+.el-progress-bar__inner {
+  transition: none;
 }
 </style>

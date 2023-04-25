@@ -2,7 +2,7 @@ import { SerialPortConnection } from './SerialPortCommunication'
 import { SerialPort } from 'serialport'
 
 import { WebSocketServer, WebSocket } from 'ws'
-import { createMessage, createPID1, ackValue } from './data_transfer';
+import { createMessage, createPID1, createPID2, ackValue } from './data_transfer';
 import { ReceiveType, SendType } from './types';
 
 const server = new WebSocketServer({ port: 555 });
@@ -38,29 +38,56 @@ server.on('connection', function (wsConn: WebSocket) {
         }
         if (!spConn || !spConn.isOpen()) spConn = new SerialPortConnection();
 
-        if ('pidData' in buffer) {
+        if ('pid1Data' in buffer) {
             // 写入PID
-            const PID1 = createPID1((buffer as any).pidData);
+            const PID1 = createPID1((buffer as any).pid1Data);
             const sum = PID1[22];
             let count = 0;
             const t = setInterval(() => {
                 count++;
                 if (sum === ackValue.value) {
                     // 发送成功
-                    wsConn.send(createMessage({ success: true, msg: '写入成功!' }, ReceiveType.SendPIDMessage))
+                    wsConn.send(createMessage({ success: true, msg: '写入PID1成功!' }, ReceiveType.SendPIDMessage))
                     clearInterval(t);
                     ackValue.value = NaN;
                     return;
                 }
                 if (count > 5) {
                     // 发送失败
-                    wsConn.send(createMessage({ success: false, msg: '写入超时，失败!' }, ReceiveType.SendPIDMessage))
+                    wsConn.send(createMessage({ success: false, msg: '写入PID1超时，失败!' }, ReceiveType.SendPIDMessage))
                     clearInterval(t);
                     ackValue.value = NaN;
                     return;
                 }
                 spConn?.send(PID1);
             }, 500)
+        } else if ('pid2Data' in buffer) {
+            // 写入PID
+            const PID2 = createPID2((buffer as any).pid2Data);
+            console.log('PID2', PID2)
+            const sum = PID2[22];
+            let count = 0;
+            setTimeout(() => {
+                const t = setInterval(() => {
+                    count++;
+                    if (sum === ackValue.value) {
+                        // 发送成功
+                        wsConn.send(createMessage({ success: true, msg: '写入PID2成功!' }, ReceiveType.SendPIDMessage))
+                        clearInterval(t);
+                        ackValue.value = NaN;
+                        return;
+                    }
+                    if (count > 5) {
+                        // 发送失败
+                        wsConn.send(createMessage({ success: false, msg: '写入PID2超时，失败!' }, ReceiveType.SendPIDMessage))
+                        clearInterval(t);
+                        ackValue.value = NaN;
+                        return;
+                    }
+                    spConn?.send(PID2);
+                }, 500)
+            }, 500 * 5)
+
         } else if ('getPID' in buffer) {
             // 指令获取PID1
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0x01, 0x5d]);
