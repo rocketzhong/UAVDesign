@@ -69,6 +69,7 @@ function createInitialization(sw: WebSocket) {
                     switch (r[9]) {
                         case 0x10: {
                             // PID1
+                            ElMessage.success('读取PID1成功!')
                             for (let i = 0; i < 3; i++) {
                                 pid_list_1[i].p = r?.[i * 3];
                                 pid_list_1[i].i = r?.[i * 3 + 1];
@@ -77,6 +78,7 @@ function createInitialization(sw: WebSocket) {
                         }; break;
                         case 0x11: {
                             // PID2
+                            ElMessage.success('读取PID2成功!')
                             for (let i = 0; i < 3; i++) {
                                 pid_list_1[i + 3].p = r?.[i * 3];
                                 pid_list_1[i + 3].i = r?.[i * 3 + 1];

@@ -69,12 +69,12 @@
 
             </div>
         </div>
-        <div class="sensor_calibration setting_wrapper ">
+        <!-- <div class="sensor_calibration setting_wrapper ">
             <div class="title">传感器校准</div>
         </div>
         <div class="setting_wrapper else_configurations">
             <div class="title">其他参数</div>
-        </div>
+        </div> -->
     </div>
 </template>
 

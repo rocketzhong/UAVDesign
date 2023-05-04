@@ -52,7 +52,7 @@ server.on('connection', function (wsConn: WebSocket) {
                     ackValue.value = NaN;
                     return;
                 }
-                if (count > 5) {
+                if (count >= 5) {
                     // 发送失败
                     wsConn.send(createMessage({ success: false, msg: '写入PID1超时，失败!' }, ReceiveType.SendPIDMessage))
                     clearInterval(t);
@@ -60,7 +60,7 @@ server.on('connection', function (wsConn: WebSocket) {
                     return;
                 }
                 spConn?.send(PID1);
-            }, 500)
+            }, 200)
         } else if ('pid2Data' in buffer) {
             // 写入PID
             const PID2 = createPID2((buffer as any).pid2Data);
@@ -77,7 +77,7 @@ server.on('connection', function (wsConn: WebSocket) {
                         ackValue.value = NaN;
                         return;
                     }
-                    if (count > 5) {
+                    if (count >= 5) {
                         // 发送失败
                         wsConn.send(createMessage({ success: false, msg: '写入PID2超时，失败!' }, ReceiveType.SendPIDMessage))
                         clearInterval(t);
@@ -85,8 +85,8 @@ server.on('connection', function (wsConn: WebSocket) {
                         return;
                     }
                     spConn?.send(PID2);
-                }, 500)
-            }, 500 * 5)
+                }, 200)
+            }, 200 * 5)
 
         } else if ('getPID' in buffer) {
             // 指令获取PID1
@@ -109,7 +109,7 @@ server.on('connection', function (wsConn: WebSocket) {
                     ackValue.value = NaN; return;
                 }
                 spConn?.send([0xaa, 0xaf, 0x02, 0x01, 0xA2, 0xFE]);
-            }, 500)
+            }, 200)
         } else if ('restorePID' in buffer) {
             // 恢复
             spConn.send([0xaa, 0xaf, 0x02, 0x01, 0xA3, 0xFF]);
